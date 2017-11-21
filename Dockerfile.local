@@ -2,7 +2,6 @@ FROM        bookpark/zinzi-base
 MAINTAINER  bkbkgg@gmail.com
 
 ENV         LANG C.UTF-8
-ENV         DJANGO_SETTINGS_MODULE config.settings.dev
 
 # 파일 복사 및 requirements 설치
 COPY        . /srv/app
@@ -13,9 +12,9 @@ WORKDIR     /srv/app
 RUN         pyenv local app
 
 # Nginx
-RUN         cp /srv/app/.config/dev/nginx/nginx.conf \
+RUN         cp /srv/app/.config/local/nginx/nginx.conf \
                 /etc/nginx/nginx.conf
-RUN         cp /srv/app/.config/dev/nginx/app.conf \
+RUN         cp /srv/app/.config/local/nginx/app.conf \
                 /etc/nginx/sites-available/
 RUN         rm -rf /etc/nginx/sites-enabled/*
 RUN         ln -sf /etc/nginx/sites-available/app.conf \
@@ -30,7 +29,7 @@ RUN         /root/.pyenv/versions/app/bin/python manage.py collectstatic --noinp
 RUN         /root/.pyenv/versions/app/bin/python manage.py migrate --noinput
 
 # supervisor
-RUN         cp /srv/app/.config/dev/supervisor/* \
+RUN         cp /srv/app/.config/local/supervisor/* \
                 /etc/supervisor/conf.d/
 CMD         supervisord -n
 

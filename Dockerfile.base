@@ -38,5 +38,5 @@ RUN         apt-get -y install supervisor
 
 # pip
 ENV         LANG C.UTF-8
-COPY        requirements.txt /srv/requirements.txt
-RUN         /root/.pyenv/versions/app/bin/pip install -r /srv/requirements.txt
+COPY        requirements.txt /srv/app/requirements.txt
+RUN         /root/.pyenv/versions/app/bin/pip install -r /srv/app/requirements.txt

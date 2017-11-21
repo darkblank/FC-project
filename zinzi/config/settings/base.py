@@ -20,7 +20,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 # Config paths
 CONFIG_SECRET_DIR = os.path.join(ROOT_DIR, '.config_secret')
 CONFIG_SECRET_COMMON_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_common.json')
-# CONFIG_SECRET_DEV_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_dev.json')
+CONFIG_SECRET_DEV_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_dev.json')
 
 config_secret_common = json.loads(open(CONFIG_SECRET_COMMON_FILE).read())
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
+    'storages',
 ]
 
 MIDDLEWARE = [
