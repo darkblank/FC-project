@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 CHOICES_RESTAURANT_TYPE = (
@@ -35,6 +34,7 @@ class Restaurant(models.Model):
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = models.ImageField()
     owner = models.ForeignKey('members.User')
+
     # available = ArrayField(
     #     models.TimeField()
     # )
