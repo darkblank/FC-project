@@ -86,7 +86,7 @@ TEMPLATES = [
 ]
 
 # Auth
-# AUTH_USER_MODEL = 'members.User'
+AUTH_USER_MODEL = 'members.User'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
