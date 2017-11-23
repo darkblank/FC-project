@@ -23,7 +23,6 @@ class Reservation(models.Model):
     party = models.PositiveIntegerField()
     reservation_number = models.PositiveIntegerField(
         unique=True,
-        max_length=14,
     )
     is_confirmed = models.BooleanField(
         default=False,
