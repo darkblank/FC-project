@@ -1,6 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -62,20 +61,6 @@ class ExtraUserInfo(models.Model):
         (USER_TYPE_CUSTOMER, 'Customer'),
         (USER_TYPE_FACEBOOK, 'Facebook'),
     )
-    CHOICES_FOOD_TYPE = (
-        ('kor', 'Korean'),
-        ('chn', 'Chinese'),
-        ('jpn', 'Japanese'),
-        ('mex', 'Mexican'),
-        ('amc', 'American'),
-        ('tha', 'Thai'),
-        ('med', 'Mediterranean'),
-        ('ita', 'Italian'),
-        ('vtn', 'Vietnamese'),
-        ('spn', 'Spanish'),
-        ('ind', 'Indian'),
-        ('etc', 'Etc'),
-    )
     user = models.OneToOneField(
         'User',
         on_delete=models.CASCADE,
@@ -103,14 +88,30 @@ class ExtraUserInfo(models.Model):
     joined_date = models.DateField(
         auto_now_add=True,
     )
-    preferences = ArrayField(
-        models.CharField(
-            max_length=3,
-            choice=CHOICES_FOOD_TYPE,
-            blank=True,
-            null=True,
-        )
+    preferences = models.ManyToManyField(
+        'Preference',
     )
     favorites = models.ManyToManyField(
         'restaurants.Restaurant',
+    )
+
+
+class Preference(models.Model):
+    CHOICES_FOOD_TYPE = (
+        ('kor', 'Korean'),
+        ('chn', 'Chinese'),
+        ('jpn', 'Japanese'),
+        ('mex', 'Mexican'),
+        ('amc', 'American'),
+        ('tha', 'Thai'),
+        ('med', 'Mediterranean'),
+        ('ita', 'Italian'),
+        ('vtn', 'Vietnamese'),
+        ('spn', 'Spanish'),
+        ('ind', 'Indian'),
+        ('etc', 'Etc'),
+    )
+    preferences = models.CharField(
+        max_length=3,
+        choices=CHOICES_FOOD_TYPE,
     )
