@@ -20,6 +20,23 @@ CHOICES_PRICE = (
     ('e', 'Expensive'),
     ('v', 'Very Expensive'),
 )
+CHOICES_TIME = (
+    ('9', '9시'),
+    ('10', '10시'),
+    ('11', '11시'),
+    ('12', '12시'),
+    ('13', '13시'),
+    ('14', '14시'),
+    ('15', '15시'),
+    ('16', '16시'),
+    ('17', '17시'),
+    ('18', '18시'),
+    ('19', '19시'),
+    ('20', '20시'),
+    ('21', '22시'),
+    ('23', '23시'),
+    ('24', '24시'),
+)
 
 
 class Restaurant(models.Model):
@@ -35,17 +52,13 @@ class Restaurant(models.Model):
     thumbnail = models.ImageField()
     owner = models.ForeignKey('members.User')
 
-    # available = ArrayField(
-    #     models.TimeField()
-    # )
-
     def __str__(self):
         return self.name
 
 
 class Menu(models.Model):
     name = models.CharField(max_length=20)
-    price = models.PositiveIntegerField(max_length=7)
+    price = models.PositiveIntegerField()
     image = models.ImageField()
     restaurant = models.ForeignKey('Restaurant')
 
@@ -56,3 +69,14 @@ class Menu(models.Model):
 class ImageForRestaurant(models.Model):
     image = models.ImageField()
     restaurant = models.ForeignKey(Restaurant)
+
+
+class ReservationTable(models.Model):
+    table_size = models.PositiveSmallIntegerField()
+    restaurant = models.ForeignKey('Restaurant', related_name='tables')
+
+
+class ReservationInfo(models.Model):
+    table = models.ForeignKey('ReservationTable', related_name='reservations')
+    time = models.CharField(max_length=1, choices=CHOICES_TIME)
+    data = models.DateField()
