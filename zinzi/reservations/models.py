@@ -1,7 +1,7 @@
 from django.db import models
 
-from zinzi.members.models import User
-from zinzi.restaurants.models import ReservationInfo
+from members.models import User
+from restaurants.models import ReservationInfo
 
 
 # fixme
