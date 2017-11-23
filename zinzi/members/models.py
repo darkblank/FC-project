@@ -114,4 +114,5 @@ class Preference(models.Model):
     preferences = models.CharField(
         max_length=3,
         choices=CHOICES_FOOD_TYPE,
+        blank=True,
     )
