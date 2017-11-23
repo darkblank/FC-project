@@ -19,9 +19,7 @@ class Reservation(models.Model):
     )
     reserved_date = models.DateTimeField()
     payment_date = models.DateTimeField()
-    price = models.PositiveIntegerField(
-        max_length=8,
-    )
+    price = models.PositiveIntegerField()
     party = models.PositiveIntegerField()
     reservation_number = models.PositiveIntegerField(
         unique=True,
