@@ -1,5 +1,6 @@
 from django.conf.urls import url
 
 urlpatterns = [
-    url(),
+    # url(r'^list/$', ),
+    # url(r'^(?P<rst_pk>\d+)/detail/$', ),
 ]
