@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class MyUserManager(BaseUserManager):
-    def _create_user(self, email, password, **extra_fields):
+    def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError('올바른 주소를 입력해주세요.')
         email = self.normalize_email(email)
@@ -23,7 +23,7 @@ class MyUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        return self._create_user(email, password, **extra_fields)
+        return self.create_user(email, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
