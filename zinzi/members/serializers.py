@@ -35,7 +35,6 @@ class SignupSerializer(serializers.ModelSerializer):
             'profile_image',
             'password1',
             'password2',
-            # 'token',
         )
 
     def validate(self, data):
