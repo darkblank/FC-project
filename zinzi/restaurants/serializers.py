@@ -6,7 +6,7 @@ from .models import Restaurant
 class RestaurantSerializer(serializers.ModelSerializer):
     # fixme
     # owner = UserSerializer(read_only=True)
-    class Restaurant:
+    class Meta:
         model = Restaurant
         fields = (
             'name',
