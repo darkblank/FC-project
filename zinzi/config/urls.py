@@ -1,5 +1,4 @@
 """zinzi URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
 Examples:
@@ -14,12 +13,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^members/', include('members.urls', namespace='members')),
+    url(r'^restaurants/', include('restaurants.urls', namespace='restaurants')),
+    url(r'^reservations/', include('reservations.urls', namespace='reservations')),
 ]
 urlpatterns += static(
     settings.MEDIA_URL,
