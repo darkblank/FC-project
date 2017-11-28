@@ -1,9 +1,7 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from members.models import User
 from members.validators import phone_number
-
-User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -37,11 +35,12 @@ class SignupSerializer(serializers.ModelSerializer):
             'profile_image',
             'password1',
             'password2',
+            # 'token',
         )
 
     def validate(self, data):
         if data['password1'] != data['password2']:
-            raise serializers.ValidationError('비밀번호가 일치하지 않습니다')
+            raise serializers.ValidationError('Password does not match')
         return data
 
     def create(self, validated_data):

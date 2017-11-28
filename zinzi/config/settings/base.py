@@ -49,6 +49,8 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'storages',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'members',
     'reservations',
@@ -101,6 +103,14 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
