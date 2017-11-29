@@ -49,7 +49,7 @@ class Restaurant(models.Model):
     description = models.TextField()
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
-    thumbnail = models.ImageField()
+    thumbnail = models.ImageField(upload_to='thumbnail')
     owner = models.ForeignKey('members.User')
 
     def __str__(self):
@@ -59,7 +59,7 @@ class Restaurant(models.Model):
 class Menu(models.Model):
     name = models.CharField(max_length=20)
     price = models.PositiveIntegerField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to='menu')
     restaurant = models.ForeignKey('Restaurant')
 
     def __str__(self):
