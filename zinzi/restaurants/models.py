@@ -1,6 +1,7 @@
 from datetime import time
 
 from django.db import models
+from django_google_maps import fields as map_fields
 
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),
@@ -41,9 +42,8 @@ CHOICES_TIME = (
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
-    city = models.CharField(max_length=5)
-    district = models.CharField(max_length=5)
-    detail_address = models.CharField(max_length=50)
+    address = map_fields.AddressField(max_length=200)
+    geolocation = map_fields.GeoLocationField(max_length=100)
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
     description = models.TextField()
