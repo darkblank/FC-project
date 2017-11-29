@@ -18,8 +18,12 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 
+from config.views import index
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    url(r'^$', index, name='index'),
     url(r'^members/', include('members.urls', namespace='members')),
     url(r'^restaurants/', include('restaurants.urls', namespace='restaurants')),
     url(r'^reservations/', include('reservations.urls', namespace='reservations')),
