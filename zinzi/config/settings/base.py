@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
+    'django_google_maps',
     'storages',
     'rest_framework',
     'rest_framework.authtoken',
@@ -111,6 +112,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+# Google Maps
+GOOGLE_MAPS_API_KEY = 'AIzaSyBJxJaeePwWjht9T6dms7hyki4-9m8gPxg'
+
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
