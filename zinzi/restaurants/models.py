@@ -40,6 +40,10 @@ CHOICES_TIME = (
 )
 
 
+# 이름 리뷰 평점 즐겨찾기 토글, 소개, 메뉴, 음식 사진, 주소, 전화번호, 영업 시간, 가격대 <
+# 평점 토글, 댓글 <
+# 예약 <
+
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)

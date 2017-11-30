@@ -89,6 +89,11 @@ TEMPLATES = [
 ]
 
 # Auth
+SUPERUSER_EMAIL = config_secret_common['django']['superuser']['email']
+SUPERUSER_NICKNAME = config_secret_common['django']['superuser']['nickname']
+SUPERUSER_PHONE = config_secret_common['django']['superuser']['phone_number']
+SUPERUSER_PASSWORD = config_secret_common['django']['superuser']['password']
+
 AUTH_USER_MODEL = 'members.User'
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,7 +120,6 @@ REST_FRAMEWORK = {
 
 # Google Maps
 GOOGLE_MAPS_API_KEY = 'AIzaSyBJxJaeePwWjht9T6dms7hyki4-9m8gPxg'
-
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
