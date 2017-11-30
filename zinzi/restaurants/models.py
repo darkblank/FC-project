@@ -54,34 +54,27 @@ class Restaurant(models.Model):
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = models.ImageField(upload_to='thumbnail')
+    maximum_party = models.PositiveIntegerField()
     owner = models.ForeignKey('members.User')
 
     def __str__(self):
         return self.name
 
 
-class Menu(models.Model):
-    name = models.CharField(max_length=20)
-    price = models.PositiveIntegerField()
-    image = models.ImageField(upload_to='menu')
-    restaurant = models.ForeignKey('Restaurant')
-
-    def __str__(self):
-        return f'{self.restaurant.name} - {self.name}'
-
-
 class ImageForRestaurant(models.Model):
     image = models.ImageField(upload_to='restaurant')
-    restaurant = models.ForeignKey(Restaurant)
-
-
-class ReservationTable(models.Model):
-    table_size = models.PositiveSmallIntegerField()
-    restaurant = models.ForeignKey('Restaurant', related_name='tables')
+    restaurant = models.ForeignKey('Restaurant', related_name='images', on_delete=models.CASCADE)
 
 
 class ReservationInfo(models.Model):
-    table = models.ForeignKey('ReservationTable', related_name='reservations')
+    restaurant = models.ForeignKey('Restaurant', related_name='reservation_info', on_delete=models.CASCADE)
+    acceptable_size_of_party = models.IntegerField(null=False, blank=True)
     time = models.CharField(max_length=1, choices=CHOICES_TIME)
     date = models.DateField()
     open = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
+        if not self.acceptable_size_of_party:
+            self.acceptable_size_of_party = self.restaurant.maximum_party
+        return super().save(*args, **kwargs)
