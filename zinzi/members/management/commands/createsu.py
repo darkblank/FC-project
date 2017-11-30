@@ -12,7 +12,7 @@ class Command(BaseCommand):
                 email=settings.SUPERUSER_EMAIL,
                 nickname=settings.SUPERUSER_NICKNAME,
                 phone_number=settings.SUPERUSER_PHONE,
-                profile_image='',
+                password=settings.SUPERUSER_PASSWORD,
             )
             print(f'Created superuser ({user.email})')
         else:
