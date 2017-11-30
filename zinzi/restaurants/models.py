@@ -1,7 +1,5 @@
-import json
 from datetime import time
 
-import requests
 from django.db import models
 
 CHOICES_RESTAURANT_TYPE = (
@@ -46,8 +44,6 @@ class Restaurant(models.Model):
     city = models.CharField(max_length=5)
     district = models.CharField(max_length=5)
     detail_address = models.CharField(max_length=50)
-    lat = models.FloatField(blank=True)
-    lng = models.FloatField(blank=True)
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
     description = models.TextField()
@@ -58,15 +54,6 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
-
-    # def get_longitude_and_latitude(self, city, district, detail_address):
-    #     url = 'https://maps.googleapis.com/maps/api/geocode/'
-    #     params = {
-    #         'json': city + '+' + district + '+' + detail_address,
-    #         'key': 'AIzaSyAP_a-dKV6eGRxD_CEhEcfPdUehFy_GpWE',
-    #     }
-    #     response = requests.get(url, params)
-    #     results = json.loads(response)
 
 
 class Menu(models.Model):
@@ -93,3 +80,4 @@ class ReservationInfo(models.Model):
     table = models.ForeignKey('ReservationTable', related_name='reservations')
     time = models.CharField(max_length=1, choices=CHOICES_TIME)
     date = models.DateField()
+    open = models.BooleanField(default=False)
