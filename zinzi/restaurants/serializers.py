@@ -10,9 +10,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         fields = (
             'name',
-            'city',
-            'district',
-            'detail_address',
+            'address',
+            'geolocation',
             'contact_number',
             'joined_date',
             'description',
