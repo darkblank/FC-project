@@ -1,11 +1,34 @@
 from rest_framework import serializers
 
-from .models import Restaurant
+from members.serializers import UserSerializer
+from .models import Restaurant, ImageForRestaurant
 
 
-class RestaurantSerializer(serializers.ModelSerializer):
-    # fixme
-    # owner = UserSerializer(read_only=True)
+class ImageForRestaurantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageForRestaurant
+        fields = (
+            'image',
+        )
+
+
+class RestaurantListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restaurant
+        fields = (
+            'name',
+            'address',
+            'geolocation',
+            'restaurant_type',
+            'average_price',
+            'thumbnail',
+        )
+
+
+class RestaurantDetailSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
+    images = ImageForRestaurantSerializer(read_only=True, many=True)
+
     class Meta:
         model = Restaurant
         fields = (
@@ -13,11 +36,10 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'address',
             'geolocation',
             'contact_number',
-            'joined_date',
             'description',
             'restaurant_type',
             'average_price',
             'thumbnail',
-            # fixme
             'owner',
+            'images',
         )
