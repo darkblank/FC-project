@@ -27,3 +27,7 @@ class Reservation(models.Model):
     is_confirmed = models.BooleanField(
         default=False,
     )
+
+
+class PaymentInformation(models.Model):
+    pass
