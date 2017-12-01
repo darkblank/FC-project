@@ -29,5 +29,5 @@ class Reservation(models.Model):
     )
 
 
-class PaymentInformation(models.Model):
-    pass
+class TestModel(models.Model):
+    imp_uid = models.TextField()
