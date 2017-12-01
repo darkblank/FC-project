@@ -24,9 +24,6 @@ class Reservation(models.Model):
     reservation_number = models.PositiveIntegerField(
         unique=True,
     )
-    is_confirmed = models.BooleanField(
-        default=False,
-    )
 
 
 class Payment(models.Model):
