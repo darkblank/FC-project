@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'members',
-    'reservations',
+    # 'reservations',
     'restaurants',
 ]
 
