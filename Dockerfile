@@ -26,8 +26,6 @@ RUN         mkdir -p /var/log/uwsgi/app
 
 # manage.py
 WORKDIR     /srv/app/zinzi
-#RUN         /root/.pyenv/versions/app/bin/python manage.py collectstatic --noinput
-#RUN         /root/.pyenv/versions/app/bin/python manage.py migrate --noinput
 
 # supervisor
 RUN         cp /srv/app/.config/dev/supervisor/* \
