@@ -26,3 +26,6 @@ STATICFILES_STORAGE = 'config.storages.StaticStorage'
 
 # Databases
 DATABASES = config_secret['django']['databases']
+
+# Google Maps
+GOOGLE_MAPS_API_KEY = 'AIzaSyBJxJaeePwWjht9T6dms7hyki4-9m8gPxg'
