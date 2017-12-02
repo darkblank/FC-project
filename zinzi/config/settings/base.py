@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
-    'members',
+    'accounts',
     'reservations',
     'restaurants',
 ]
@@ -96,7 +96,7 @@ SUPERUSER_NICKNAME = config_secret_common['django']['superuser']['nickname']
 SUPERUSER_PHONE = config_secret_common['django']['superuser']['phone_number']
 SUPERUSER_PASSWORD = config_secret_common['django']['superuser']['password']
 
-AUTH_USER_MODEL = 'members.User'
+AUTH_USER_MODEL = 'accounts.User'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from members.models import User
-from members.validators import phone_number
+from accounts.models import User, Profile
+from accounts.validators import phone_number
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,29 +10,35 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'email',
-            'nickname',
-            'phone_number',
-            'profile_image',
         )
 
 
-class SignupSerializer(serializers.ModelSerializer):
-    password1 = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
-    nickname = serializers.CharField(write_only=True)
+class ProfileSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(
         validators=[phone_number],
     )
     profile_image = serializers.ImageField(allow_empty_file=True)
 
     class Meta:
+        model = Profile
+        fields = (
+            'name',
+            'nickname',
+            'phone_number',
+            'profile_image',
+            'preferences',
+        )
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    class Meta:
         model = User
         fields = (
             'pk',
             'email',
-            'nickname',
-            'phone_number',
-            'profile_image',
             'password1',
             'password2',
         )
@@ -46,9 +52,6 @@ class SignupSerializer(serializers.ModelSerializer):
         return self.Meta.model.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password1'],
-            nickname=validated_data['nickname'],
-            phone_number=validated_data['phone_number'],
-            profile_image=validated_data['profile_image'],
         )
 
     def to_representation(self, instance):

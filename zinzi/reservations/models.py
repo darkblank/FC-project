@@ -1,6 +1,6 @@
 from django.db import models
 
-from members.models import User
+from accounts.models import User
 from restaurants.models import ReservationInfo
 
 
