@@ -1,9 +1,10 @@
-from datetime import time
+from datetime import time, datetime
 
 import dateutil.parser
 from django.db import models
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),
@@ -103,11 +104,22 @@ class ReservationInfo(models.Model):
             self.acceptable_size_of_party = self.restaurant.maximum_party
         return super().save(*args, **kwargs)
 
-    def acceptable_time(self, res_pk, party, date):
-        if not date:
-            raise ValidationError('date가 형식에 맞지 않습니다.')
-        date = dateutil.parser.parse(date)
-        if res_pk and party and date:
-            if res_pk.isdigit() and party.isdigit():
-                return self.objects.filter(restaurant_id=res_pk, date=date, acceptable_size_of_party__gte=party)
+    # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
+    @staticmethod
+    def check_acceptable_time(res_pk, party, date):
+        restaurant = get_object_or_404(Restaurant, pk=res_pk)
+        # string으로 온 date값을 python에서 사용하는 datetime type으로 파싱 진행
+        # 파싱을 진행하며 잘못된 값이 올 경우 None객체 반환
+        try:
+            parsed_date = dateutil.parser.parse(date)
+        except ValueError:
+            parsed_date = None
+        # 모든 parameter가 정상적인 경우 필터된 객체를 반환
+        # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
+        if party.isdigit() and isinstance(parsed_date, datetime):
+            return ReservationInfo.objects.filter(
+                restaurant=restaurant,
+                acceptable_size_of_party__gte=party,
+                date=date,
+            )
         return None

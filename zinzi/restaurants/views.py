@@ -34,12 +34,8 @@ class CheckOpenedTimeView(generics.ListAPIView):
     serializer_class = ReservationInfoSerializer
 
     def get_queryset(self):
+        # queryset에서 parameter값을 받아옴
         res_pk = self.request.query_params.get('res_pk', None)
         party = self.request.query_params.get('party', None)
         date = self.request.query_params.get('date', None)
-        queryset = ReservationInfo.objects.filter(
-            restaurant_id=res_pk,
-            acceptable_size_of_party__gte=party,
-            date=date,
-        )
-        return queryset
+        return ReservationInfo.check_acceptable_time(res_pk=res_pk, party=party, date=date)
