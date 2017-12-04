@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from reservations.models import Reservation
+from reservations.models import Payment
 
-admin.site.register(Reservation)
+admin.site.register(Payment)
