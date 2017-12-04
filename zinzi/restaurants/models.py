@@ -2,6 +2,7 @@ from datetime import time
 
 from django.db import models
 from django_google_maps import fields as map_fields
+from rest_framework.exceptions import ValidationError
 
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),
@@ -23,6 +24,13 @@ CHOICES_PRICE = (
     ('e', 'Expensive'),
     ('v', 'Very Expensive'),
 )
+CONVERT_TO_PRICE = {
+    'c': 10000,
+    'n': 15000,
+    'e': 20000,
+    'v': 40000,
+}
+
 CHOICES_TIME = (
     (time(9, 00, 00), '9시'),
     (time(10, 00, 00), '10시'),
@@ -62,6 +70,19 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    # self.average_price를 키로 CONVERT_TO_PRICE에서 가져와 반환
+    def get_price(self):
+        if self.average_price in CONVERT_TO_PRICE.keys():
+            return CONVERT_TO_PRICE[self.average_price]
+        raise ValidationError
+
+    # 예약관련 항목에서 인원수에 따른 계산을 하기위해 self.get_price에서 인원별 금액을 가져온 후 인자 값으로 받은 party 값을 곱해서 반환
+    def calculate_price(self, party):
+        if not party.isdigit():
+            raise ValidationError
+        party = int(party)
+        return self.get_price() * party
 
 
 class ImageForRestaurant(models.Model):
