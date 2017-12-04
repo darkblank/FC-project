@@ -1,5 +1,6 @@
 from datetime import time
 
+import dateutil.parser
 from django.db import models
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError
@@ -93,12 +94,20 @@ class ImageForRestaurant(models.Model):
 class ReservationInfo(models.Model):
     restaurant = models.ForeignKey('Restaurant', related_name='reservation_info', on_delete=models.CASCADE)
     acceptable_size_of_party = models.IntegerField(null=False, blank=True)
-    time = models.CharField(max_length=1, choices=CHOICES_TIME)
+    time = models.TimeField(choices=CHOICES_TIME)
     date = models.DateField()
-    open = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
         if not self.acceptable_size_of_party:
             self.acceptable_size_of_party = self.restaurant.maximum_party
         return super().save(*args, **kwargs)
+
+    def acceptable_time(self, res_pk, party, date):
+        if not date:
+            raise ValidationError('date가 형식에 맞지 않습니다.')
+        date = dateutil.parser.parse(date)
+        if res_pk and party and date:
+            if res_pk.isdigit() and party.isdigit():
+                return self.objects.filter(restaurant_id=res_pk, date=date, acceptable_size_of_party__gte=party)
+        return None
