@@ -1,10 +1,12 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 
-from .models import Restaurant, ReservationInfo
+from .models import Restaurant, ReservationInfo, Comment
 from .pagination import RestaurantListPagination
 from .permissions import IsOwnerOrReadOnly
-from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
+from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer, \
+    CommentSerializer
 
 
 class RestaurantListView(generics.ListAPIView):
@@ -39,3 +41,20 @@ class CheckOpenedTimeView(generics.ListAPIView):
         party = self.request.query_params.get('party', None)
         date = self.request.query_params.get('date', None)
         return ReservationInfo.check_acceptable_time(res_pk=res_pk, party=party, date=date)
+
+
+class CommentListView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    # fixme permission 작성해야함
+
+    def get_queryset(self):
+        res_pk = self.kwargs['res_pk']
+        queryset = Comment.objects.filter(restaurant_id=res_pk)
+        return queryset
+
+    def perform_create(self, serializer):
+        # fixme author에 request.user 넣어야
+        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['res_pk'])
+        serializer.save(restaurant=restaurant)
+        restaurant.calculate_goten_star_rate()
+

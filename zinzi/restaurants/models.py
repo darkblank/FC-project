@@ -2,6 +2,7 @@ from datetime import time, datetime
 
 import dateutil.parser
 from django.db import models
+from django.db.models import Sum
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -49,6 +50,19 @@ CHOICES_TIME = (
     (time(20, 00, 00), '21시'),
 )
 
+STAR_RATING = (
+    (0.5, 0.5),
+    (1, 1),
+    (1.5, 1.5),
+    (2, 2),
+    (2.5, 2.5),
+    (3, 3),
+    (3.5, 3.5),
+    (4, 4),
+    (4.5, 4.5),
+    (5, 5),
+)
+
 
 # 이름 리뷰 평점 즐겨찾기 토글, 소개, 메뉴, 음식 사진, 주소, 전화번호, 영업 시간, 가격대 <
 # 평점 토글, 댓글 <
@@ -66,7 +80,7 @@ class Restaurant(models.Model):
     thumbnail = models.ImageField(upload_to='thumbnail')
     menu = models.ImageField(upload_to='menu')
     business_hours = models.CharField(max_length=100)
-    star_raing = models.FloatField()
+    star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
     owner = models.ForeignKey('members.User')
 
@@ -86,10 +100,20 @@ class Restaurant(models.Model):
         party = int(party)
         return self.get_price() * party
 
+    def calculate_goten_star_rate(self):
+        star_rate = Comment.objects.filter(restaurant=self).aggregate(Sum('star_rate'))
+        count_star_rate = Comment.objects.filter(restaurant=self).count()
+        self.star_rate = star_rate['star_rate__sum'] / count_star_rate
+        self.save()
+        return star_rate
+
 
 class ImageForRestaurant(models.Model):
     image = models.ImageField(upload_to='restaurant')
     restaurant = models.ForeignKey('Restaurant', related_name='images', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.restaurant} - {self.pk}'
 
 
 class ReservationInfo(models.Model):
@@ -123,3 +147,21 @@ class ReservationInfo(models.Model):
                 date=date,
             )
         return None
+
+    def __str__(self):
+        return f'{self.restaurant} - [{self.date}-{self.time}]'
+
+
+class Comment(models.Model):
+    author = models.ForeignKey('members.User')
+    restaurant = models.ForeignKey('Restaurant', related_name='comments', on_delete=models.CASCADE)
+    star_rate = models.FloatField(choices=STAR_RATING)
+    comment = models.CharField(max_length=120)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('created_at', 'pk')
+
+    def __str__(self):
+        return f'{self.author.email} - {self.restaurant} [{self.created_at}]'

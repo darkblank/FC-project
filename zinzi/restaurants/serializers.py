@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from members.serializers import UserSerializer
-from .models import Restaurant, ImageForRestaurant, ReservationInfo
+from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment
 
 
 class ImageForRestaurantSerializer(serializers.ModelSerializer):
@@ -56,4 +56,15 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
             'acceptable_size_of_party',
             'time',
             'date',
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = (
+            'author',
+            'restaurant',
+            'star_rate',
+            'comment',
         )
