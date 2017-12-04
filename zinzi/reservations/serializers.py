@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from reservations.models import TestModel
+from reservations.models import Payment
 
 
-class TestSerializer(serializers.ModelSerializer):
+class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TestModel
+        model = Payment
         fields = (
-            'imp_uid',
+            '__all__'
         )

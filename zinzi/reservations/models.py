@@ -5,25 +5,15 @@ from restaurants.models import ReservationInfo
 
 
 # fixme
-class Reservation(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-    )
-    information = models.ForeignKey(
-        ReservationInfo,
-        on_delete=models.PROTECT,
-    )
-    requested_date = models.DateTimeField(
-        auto_now_add=True,
-    )
-    reserved_date = models.DateTimeField()
-    payment_date = models.DateTimeField()
-    price = models.PositiveIntegerField()
-    party = models.PositiveIntegerField()
-    reservation_number = models.PositiveIntegerField(
-        unique=True,
-    )
+# class Reservation(models.Model):
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.PROTECT,
+#     )
+#     information = models.ForeignKey(
+#         ReservationInfo,
+#         on_delete=models.PROTECT,
+#     )
 
 
 class Payment(models.Model):
