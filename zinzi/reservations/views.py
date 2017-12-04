@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from iamport import Iamport
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,8 +12,13 @@ class PaymentList(APIView):
         iamport = Iamport(imp_key='6343293486082258',
                           imp_secret='JEAB6oXOMsc2oysgdu4tJzlfgQvn5sfP7Qqefn21Qe3fNwv11zuL9Q0qGvNMY2B6T1l8pn9fCdvpK0rL')
         response = iamport.find(imp_uid=request.data.get('imp_uid'))
+        print(response)
         serializer = PaymentSerializer(data=response)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def test(request):
+    return render(request, 'test.html')

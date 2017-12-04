@@ -33,8 +33,8 @@ class Payment(models.Model):
     paid_at = models.IntegerField()
     failed_at = models.IntegerField()
     cancelled_at = models.IntegerField()
-    fail_reason = models.CharField(max_length=255)
-    cancel_reason = models.CharField(max_length=255)
+    fail_reason = models.CharField(max_length=255, null=True, blank=True)
+    cancel_reason = models.CharField(max_length=255, null=True, blank=True)
     # 주문자 정보
     buyer_name = models.CharField(max_length=10)
     buyer_email = models.CharField(max_length=30)
