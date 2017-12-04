@@ -16,6 +16,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = (
+            'pk',
             'name',
             'address',
             'geolocation',
@@ -32,14 +33,16 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = (
+            'pk',
             'name',
             'address',
+            'menu',
             'geolocation',
             'contact_number',
             'description',
             'restaurant_type',
             'average_price',
             'thumbnail',
-            'owner',
             'images',
+            'owner',
         )

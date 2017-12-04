@@ -54,6 +54,9 @@ class Restaurant(models.Model):
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = models.ImageField(upload_to='thumbnail')
+    menu = models.ImageField(upload_to='menu')
+    business_hours = models.CharField(max_length=100)
+    star_raing = models.FloatField()
     maximum_party = models.PositiveIntegerField()
     owner = models.ForeignKey('members.User')
 
