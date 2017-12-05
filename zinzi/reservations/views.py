@@ -1,11 +1,12 @@
 from django.http import Http404
 from django.shortcuts import render
 from iamport import Iamport
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Reservation
+from reservations.models import Reservation, Payment
 from reservations.serializers import PaymentSerializer
 from restaurants.models import ReservationInfo
 
@@ -26,8 +27,9 @@ class PaymentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PaymentDetailView(APIView):
-    pass
+class PaymentDetailView(generics.RetrieveAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
 
 
 # fix me
