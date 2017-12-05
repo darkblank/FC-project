@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from .models import Restaurant, ReservationInfo, Comment
-from .pagination import RestaurantListPagination
+from .pagination import RestaurantListPagination, CommentListPagination
 from .permissions import IsOwnerOrReadOnly
 from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer, \
     CommentSerializer
@@ -28,8 +28,10 @@ class RestaurantDetailView(generics.RetrieveAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantDetailSerializer
     # 로그인을 하지 않았거나 Owner와 request.user가 같지 않을 경우 ReadOnly만 가능
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    )
 
 
 class CheckOpenedTimeView(generics.ListAPIView):
@@ -45,7 +47,10 @@ class CheckOpenedTimeView(generics.ListAPIView):
 
 class CommentListView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
-    # fixme permission 작성해야함
+    pagination_class = CommentListPagination
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+    )
 
     def get_queryset(self):
         res_pk = self.kwargs['res_pk']
@@ -57,4 +62,3 @@ class CommentListView(generics.ListCreateAPIView):
         restaurant = get_object_or_404(Restaurant, pk=self.kwargs['res_pk'])
         serializer.save(restaurant=restaurant)
         restaurant.calculate_goten_star_rate()
-

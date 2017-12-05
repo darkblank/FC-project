@@ -88,19 +88,6 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
-    # self.average_price를 키로 CONVERT_TO_PRICE에서 가져와 반환
-    def get_price(self):
-        if self.average_price in CONVERT_TO_PRICE.keys():
-            return CONVERT_TO_PRICE[self.average_price]
-        raise ValidationError
-
-    # 예약관련 항목에서 인원수에 따른 계산을 하기위해 self.get_price에서 인원별 금액을 가져온 후 인자 값으로 받은 party 값을 곱해서 반환
-    def calculate_price(self, party):
-        if not party.isdigit():
-            raise ValidationError
-        party = int(party)
-        return self.get_price() * party
-
     def calculate_goten_star_rate(self):
         star_rate = Comment.objects.filter(restaurant=self).aggregate(Sum('star_rate'))
         count_star_rate = Comment.objects.filter(restaurant=self).count()
@@ -120,14 +107,24 @@ class ImageForRestaurant(models.Model):
 class ReservationInfo(models.Model):
     restaurant = models.ForeignKey('Restaurant', related_name='reservation_info', on_delete=models.CASCADE)
     acceptable_size_of_party = models.IntegerField(null=False, blank=True)
+    price = models.PositiveIntegerField(null=False, blank=True)
     time = models.TimeField(choices=CHOICES_TIME)
     date = models.DateField()
+
+    def __str__(self):
+        return f'{self.restaurant} - [{self.date}-{self.time}]'
 
     def save(self, *args, **kwargs):
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
         if not self.acceptable_size_of_party:
             self.acceptable_size_of_party = self.restaurant.maximum_party
+        self.price = CONVERT_TO_PRICE[self.restaurant.average_price]
         return super().save(*args, **kwargs)
+
+    def calculate_price(self, party):
+        if party.isdigit() and party <= self.acceptable_size_of_party:
+            return self.price * party
+        raise ValidationError
 
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
     @staticmethod
@@ -148,9 +145,6 @@ class ReservationInfo(models.Model):
                 date=date,
             )
         return None
-
-    def __str__(self):
-        return f'{self.restaurant} - [{self.date}-{self.time}]'
 
 
 class Comment(models.Model):
