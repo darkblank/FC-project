@@ -1,5 +1,4 @@
 from rest_framework import generics, permissions
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from .models import Restaurant, ReservationInfo, Comment
@@ -18,10 +17,14 @@ class RestaurantListView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_type = self.request.query_params.get('type', None)
         average_price = self.request.query_params.get('price', None)
-        if not restaurant_type or not average_price:
-            raise ValidationError('type 또는 price가 입력되지 않았습니다.')
-        queryset = Restaurant.objects.filter(restaurant_type=restaurant_type, average_price=average_price)
-        return queryset
+        if restaurant_type is None and average_price is None:
+            return Restaurant.objects.all()
+        elif restaurant_type is None and average_price:
+            return Restaurant.objects.filter(average_price=average_price)
+        elif restaurant_type and average_price is None:
+            return Restaurant.objects.filter(restaurant_type=restaurant_type)
+        else:
+            return Restaurant.objects.filter(restaurant_type=restaurant_type, average_price=average_price)
 
 
 class RestaurantDetailView(generics.RetrieveAPIView):
@@ -58,7 +61,6 @@ class CommentListView(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        # fixme author에 request.user 넣어야
         restaurant = get_object_or_404(Restaurant, pk=self.kwargs['res_pk'])
-        serializer.save(restaurant=restaurant)
+        serializer.save(restaurant=restaurant, author=self.request.user)
         restaurant.calculate_goten_star_rate()
