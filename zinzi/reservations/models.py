@@ -4,16 +4,19 @@ from accounts.models import User
 from restaurants.models import ReservationInfo
 
 
-# fixme
-# class Reservation(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.PROTECT,
-#     )
-#     information = models.ForeignKey(
-#         ReservationInfo,
-#         on_delete=models.PROTECT,
-#     )
+class Reservation(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+    )
+    information = models.ForeignKey(
+        ReservationInfo,
+        on_delete=models.PROTECT,
+    )
+    party = models.PositiveSmallIntegerField()
+    price = models.PositiveIntegerField()
+    phone_number = models.CharField(max_length=11)
+    email = models.CharField(max_length=30)
 
 
 class Payment(models.Model):
