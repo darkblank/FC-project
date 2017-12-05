@@ -83,7 +83,7 @@ class Restaurant(models.Model):
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
-    owner = models.ForeignKey('members.User')
+    owner = models.ForeignKey('accounts.User')
 
     def __str__(self):
         return self.name
