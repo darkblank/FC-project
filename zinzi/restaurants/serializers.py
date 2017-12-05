@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from members.serializers import UserSerializer
+from accounts.serializers import UserSerializer
 from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment
 
 

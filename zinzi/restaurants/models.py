@@ -154,7 +154,7 @@ class ReservationInfo(models.Model):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey('members.User')
+    author = models.ForeignKey('accounts.User')
     restaurant = models.ForeignKey('Restaurant', related_name='comments', on_delete=models.CASCADE)
     star_rate = models.FloatField(choices=STAR_RATING)
     comment = models.CharField(max_length=120)
