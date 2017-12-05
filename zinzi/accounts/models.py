@@ -5,26 +5,22 @@ from rest_framework.authtoken.models import Token
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, nickname, phone_number, profile_image, password=None):
+    def create_user(self, email, name, password=None):
         if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
-            nickname=nickname,
-            phone_number=phone_number,
-            profile_image=profile_image,
+            name=name,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, nickname, phone_number, password):
+    def create_superuser(self, email, name, password):
         user = self.create_user(
             email,
-            nickname=nickname,
-            phone_number=phone_number,
-            profile_image='',
+            name=name,
             password=password,
         )
         user.is_admin = True
@@ -33,50 +29,15 @@ class MyUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    USER_TYPE_CUSTOMER = 'c'
-    USER_TYPE_FACEBOOK = 'f'
-    CHOICES_USER_TYPE = (
-        (USER_TYPE_CUSTOMER, 'Customer'),
-        (USER_TYPE_FACEBOOK, 'Facebook'),
-    )
-
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
     )
-    nickname = models.CharField(
-        max_length=10,
-        unique=True,
+    name = models.CharField(
+        max_length=20,
     )
-    user_type = models.CharField(
-        max_length=1,
-        choices=CHOICES_USER_TYPE,
-        default=USER_TYPE_CUSTOMER,
-    )
-    phone_number = models.CharField(
-        max_length=13,
-    )
-    profile_image = models.ImageField(
-        upload_to='user',
-        blank=True,
-        null=True,
-    )
-    is_owner = models.BooleanField(
-        default=False,
-    )
-    joined_date = models.DateField(
-        auto_now_add=True,
-    )
-    preferences = models.ManyToManyField(
-        'Preference',
-        related_name='preference_set'
-    )
-    favorites = models.ManyToManyField(
-        'restaurants.Restaurant',
-        related_name='favorite_set'
-    )
-
+    # 이메일 인증 전 까지는 is_active = False
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -84,8 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
-        'nickname',
-        'phone_number',
+        'name',
     ]
 
     def get_full_name(self):
@@ -110,6 +70,47 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def token(self):
         return Token.objects.get_or_create(user=self)[0].key
+
+
+class Profile(models.Model):
+    USER_TYPE_CUSTOMER = 'c'
+    USER_TYPE_FACEBOOK = 'f'
+    CHOICES_USER_TYPE = (
+        (USER_TYPE_CUSTOMER, 'Customer'),
+        (USER_TYPE_FACEBOOK, 'Facebook'),
+    )
+    user = models.OneToOneField(User)
+    nickname = models.CharField(
+        max_length=10,
+        unique=True,
+    )
+    user_type = models.CharField(
+        max_length=1,
+        choices=CHOICES_USER_TYPE,
+        default=USER_TYPE_CUSTOMER,
+    )
+    phone_number = models.CharField(
+        max_length=13,
+    )
+    profile_image = models.ImageField(
+        upload_to='user',
+        blank=True,
+        null=True,
+    )
+    preferences = models.ManyToManyField(
+        'Preference',
+        related_name='preference_set'
+    )
+    favorites = models.ManyToManyField(
+        'restaurants.Restaurant',
+        related_name='favorite_set'
+    )
+    is_owner = models.BooleanField(
+        default=False,
+    )
+    joined_date = models.DateField(
+        auto_now_add=True,
+    )
 
 
 class Preference(models.Model):
