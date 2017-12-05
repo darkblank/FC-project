@@ -33,7 +33,6 @@ CONVERT_TO_PRICE = {
     'e': 20000,
     'v': 40000,
 }
-
 CHOICES_TIME = (
     (time(9, 00, 00), '9시'),
     (time(10, 00, 00), '10시'),
