@@ -88,8 +88,9 @@ class Restaurant(models.Model):
         return self.name
 
     def calculate_goten_star_rate(self):
-        star_rate = Comment.objects.filter(restaurant=self).aggregate(Sum('star_rate'))
-        count_star_rate = Comment.objects.filter(restaurant=self).count()
+        queryset = Comment.objects.filter(restaurant=self)
+        star_rate = queryset.aggregate(Sum('star_rate'))
+        count_star_rate = queryset.count()
         self.star_rate = star_rate['star_rate__sum'] / count_star_rate
         self.save()
         return star_rate
