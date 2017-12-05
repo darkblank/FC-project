@@ -5,20 +5,22 @@ from rest_framework.authtoken.models import Token
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, email, name, password=None):
         if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
+            name=name,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, email, name, password):
         user = self.create_user(
             email,
+            name=name,
             password=password,
         )
         user.is_admin = True
@@ -32,14 +34,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255,
         unique=True,
     )
-
+    name = models.CharField(
+        max_length=20,
+    )
+    # 이메일 인증 전 까지는 is_active = False
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = [
+        'name',
+    ]
 
     def get_full_name(self):
         return self.email
@@ -73,9 +80,6 @@ class Profile(models.Model):
         (USER_TYPE_FACEBOOK, 'Facebook'),
     )
     user = models.OneToOneField(User)
-    name = models.CharField(
-        max_length=20,
-    )
     nickname = models.CharField(
         max_length=10,
         unique=True,

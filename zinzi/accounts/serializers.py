@@ -1,33 +1,38 @@
 from rest_framework import serializers
 
-from accounts.models import User, Profile
-from accounts.validators import phone_number
+from accounts.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # nickname = serializers.CharField(max_length=10)
+    # phone_number = serializers.CharField(
+    #     validators=[phone_number],
+    # )
+    # profile_image = serializers.ImageField(allow_empty_file=True)
+
     class Meta:
         model = User
         fields = (
             'pk',
-            'email',
-        )
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(
-        validators=[phone_number],
-    )
-    profile_image = serializers.ImageField(allow_empty_file=True)
-
-    class Meta:
-        model = Profile
-        fields = (
             'name',
-            'nickname',
-            'phone_number',
-            'profile_image',
-            'preferences',
+            'email',
+            # 'nickname',
+            # 'phone_number',
+            # 'profile_image',
         )
+
+    # def update(self, instance, validated_data):
+    #     profile_data = validated_data.pop('profile', {})
+    #     name = profile_data.get('name')
+    #
+    #     instance = super(UserSerializer, self).update(instance, validated_data)
+    #
+    #     # get and update user profile
+    #     profile = instance.profile
+    #     if profile_data and name:
+    #         profile.name = name
+    #         profile.save()
+    #     return instance
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -38,6 +43,7 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'pk',
+            'name',
             'email',
             'password1',
             'password2',
@@ -50,6 +56,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return self.Meta.model.objects.create_user(
+            name=validated_data['name'],
             email=validated_data['email'],
             password=validated_data['password1'],
         )
