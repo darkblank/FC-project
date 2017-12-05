@@ -71,6 +71,7 @@ STAR_RATING = (
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)
+    # fixme requests로 받아올 수 있게 처리
     geolocation = map_fields.GeoLocationField(max_length=100)
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
