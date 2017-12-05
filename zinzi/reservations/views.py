@@ -7,7 +7,11 @@ from rest_framework.views import APIView
 from reservations.serializers import PaymentSerializer
 
 
-class PaymentList(APIView):
+def test(request):
+    return render(request, 'test.html')
+
+
+class PaymentCreateView(APIView):
     def post(self, request):
         iamport = Iamport(imp_key='6343293486082258',
                           imp_secret='JEAB6oXOMsc2oysgdu4tJzlfgQvn5sfP7Qqefn21Qe3fNwv11zuL9Q0qGvNMY2B6T1l8pn9fCdvpK0rL')
@@ -19,5 +23,5 @@ class PaymentList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def test(request):
-    return render(request, 'test.html')
+class PaymentDetailView(APIView):
+    pass
