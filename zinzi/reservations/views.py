@@ -1,10 +1,13 @@
+from django.http import Http404
 from django.shortcuts import render
 from iamport import Iamport
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from reservations.models import Reservation
 from reservations.serializers import PaymentSerializer
+from restaurants.models import ReservationInfo
 
 
 def test(request):
@@ -25,3 +28,20 @@ class PaymentCreateView(APIView):
 
 class PaymentDetailView(APIView):
     pass
+
+
+# fix me
+class ReservationListCreateView(APIView):
+    def get_object(self, pk):
+        try:
+            return ReservationInfo.objects.get(pk=pk)
+        except ReservationInfo.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk):
+        information = self.get_object(pk)
+        serializer = Reservation(data=request.data)
+        if serializer.is_valid():
+            serializer.user = self.request.user
+            serializer.information = information
+            serializer.save()
