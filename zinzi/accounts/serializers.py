@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Profile
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,13 +48,13 @@ class SignupSerializer(serializers.ModelSerializer):
         return data
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = (
-            'profile_image',
-            'nickname',
-            'user',
-        )
+# class ProfileSerializer(serializers.ModelSerializer):
+#     user = UserSerializer(read_only=True)
+#
+#     class Meta:
+#         model = Profile
+#         fields = (
+#             'profile_image',
+#             'nickname',
+#             'user',
+#         )
