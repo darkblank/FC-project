@@ -17,14 +17,15 @@ class RestaurantListView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_type = self.request.query_params.get('type', None)
         average_price = self.request.query_params.get('price', None)
+        queryset = Restaurant.objects.all()
         if restaurant_type is None and average_price is None:
-            return Restaurant.objects.all()
+            return queryset
         elif restaurant_type is None and average_price:
-            return Restaurant.objects.filter(average_price=average_price)
+            return queryset.filter(average_price=average_price)
         elif restaurant_type and average_price is None:
-            return Restaurant.objects.filter(restaurant_type=restaurant_type)
+            return queryset.filter(restaurant_type=restaurant_type)
         else:
-            return Restaurant.objects.filter(restaurant_type=restaurant_type, average_price=average_price)
+            return queryset.filter(restaurant_type=restaurant_type, average_price=average_price)
 
 
 class RestaurantDetailView(generics.RetrieveAPIView):
