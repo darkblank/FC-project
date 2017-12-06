@@ -55,6 +55,7 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReservationInfo
         fields = (
+            'pk',
             'restaurant',
             'acceptable_size_of_party',
             'price',

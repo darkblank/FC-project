@@ -46,7 +46,7 @@ CHOICES_TIME = (
     (time(18, 00, 00), '18시'),
     (time(19, 00, 00), '19시'),
     (time(20, 00, 00), '20시'),
-    (time(20, 00, 00), '21시'),
+    (time(21, 00, 00), '21시'),
 )
 
 STAR_RATING = (
@@ -135,6 +135,8 @@ class ReservationInfo(models.Model):
         try:
             parsed_date = dateutil.parser.parse(date)
         except ValueError:
+            parsed_date = None
+        except TypeError:
             parsed_date = None
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
