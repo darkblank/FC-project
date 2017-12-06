@@ -1,38 +1,16 @@
 from rest_framework import serializers
 
-from accounts.models import User
+from .models import User, Profile
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # nickname = serializers.CharField(max_length=10)
-    # phone_number = serializers.CharField(
-    #     validators=[phone_number],
-    # )
-    # profile_image = serializers.ImageField(allow_empty_file=True)
-
     class Meta:
         model = User
         fields = (
             'pk',
             'name',
             'email',
-            # 'nickname',
-            # 'phone_number',
-            # 'profile_image',
         )
-
-    # def update(self, instance, validated_data):
-    #     profile_data = validated_data.pop('profile', {})
-    #     name = profile_data.get('name')
-    #
-    #     instance = super(UserSerializer, self).update(instance, validated_data)
-    #
-    #     # get and update user profile
-    #     profile = instance.profile
-    #     if profile_data and name:
-    #         profile.name = name
-    #         profile.save()
-    #     return instance
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -68,3 +46,15 @@ class SignupSerializer(serializers.ModelSerializer):
             'token': instance.token,
         }
         return data
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'profile_image',
+            'nickname',
+            'user',
+        )
