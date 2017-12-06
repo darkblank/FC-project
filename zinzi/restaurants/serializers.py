@@ -67,7 +67,7 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
         fields = (
             'restaurant',
             'acceptable_size_of_party',
-            'price',s
+            'price',
             'time',
             'date',
         )
