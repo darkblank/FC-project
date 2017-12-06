@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer
+from .serializers import SignupSerializer, UserSerializer
 
 User = get_user_model()
 
