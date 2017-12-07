@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
 from rest_framework import generics
 from rest_framework import mixins
@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from reservations.models import Payment
-from reservations.serializers import PaymentSerializer
+from reservations.serializers import PaymentSerializer, ReservationSerializer
+from restaurants.models import ReservationInfo
 
 
 def test(request):
@@ -32,7 +33,22 @@ class PaymentDetailView(generics.RetrieveAPIView):
 
 
 # fix me
-class ReservationListCreateView(generics.GenericAPIView,
-                                mixins.CreateModelMixin,
-                                mixins.RetrieveModelMixin):
-    pass
+class ReservationDetailCreateView(generics.GenericAPIView,
+                                  mixins.CreateModelMixin,
+                                  mixins.RetrieveModelMixin):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        queryset = ReservationInfo.objects.get(pk=pk)
+        return queryset
+
+    def perform_create(self, serializer):
+        information = get_object_or_404(ReservationInfo, pk=self.kwargs['pk'])
+        serializer.save(
+            user=self.request.user,
+            information=information,
+        )
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
