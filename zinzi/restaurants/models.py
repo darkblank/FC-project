@@ -33,7 +33,6 @@ CONVERT_TO_PRICE = {
     'e': 20000,
     'v': 40000,
 }
-
 CHOICES_TIME = (
     (time(9, 00, 00), '9시'),
     (time(10, 00, 00), '10시'),
@@ -47,7 +46,7 @@ CHOICES_TIME = (
     (time(18, 00, 00), '18시'),
     (time(19, 00, 00), '19시'),
     (time(20, 00, 00), '20시'),
-    (time(20, 00, 00), '21시'),
+    (time(21, 00, 00), '21시'),
 )
 
 STAR_RATING = (
@@ -73,6 +72,7 @@ class Restaurant(models.Model):
     address = map_fields.AddressField(max_length=200)
     # fixme requests로 받아올 수 있게 처리
     geolocation = map_fields.GeoLocationField(max_length=100)
+    # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
     description = models.TextField()
@@ -89,8 +89,9 @@ class Restaurant(models.Model):
         return self.name
 
     def calculate_goten_star_rate(self):
-        star_rate = Comment.objects.filter(restaurant=self).aggregate(Sum('star_rate'))
-        count_star_rate = Comment.objects.filter(restaurant=self).count()
+        queryset = Comment.objects.filter(restaurant=self)
+        star_rate = queryset.aggregate(Sum('star_rate'))
+        count_star_rate = queryset.count()
         self.star_rate = star_rate['star_rate__sum'] / count_star_rate
         self.save()
         return star_rate
@@ -135,6 +136,8 @@ class ReservationInfo(models.Model):
         try:
             parsed_date = dateutil.parser.parse(date)
         except ValueError:
+            parsed_date = None
+        except TypeError:
             parsed_date = None
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환

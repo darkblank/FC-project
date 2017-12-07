@@ -12,17 +12,6 @@ class ImageForRestaurantSerializer(serializers.ModelSerializer):
         )
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = (
-            'author',
-            'restaurant',
-            'star_rate',
-            'comment',
-        )
-
-
 class RestaurantListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
@@ -40,7 +29,6 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     images = ImageForRestaurantSerializer(read_only=True, many=True)
-    comments = CommentSerializer(many=True)
 
     class Meta:
         model = Restaurant
@@ -48,16 +36,18 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             'pk',
             'name',
             'address',
-            'menu',
             'geolocation',
             'contact_number',
             'description',
             'restaurant_type',
             'average_price',
             'thumbnail',
-            'images',
+            'menu',
+            'business_hours',
+            'star_rate',
+            'maximum_party',
             'owner',
-            'comments',
+            'images',
         )
 
 
@@ -65,9 +55,23 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReservationInfo
         fields = (
+            'pk',
             'restaurant',
             'acceptable_size_of_party',
             'price',
             'time',
             'date',
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = (
+            'author',
+            'restaurant',
+            'star_rate',
+            'comment',
+            'created_at',
+            'updated_at',
         )
