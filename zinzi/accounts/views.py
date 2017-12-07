@@ -5,7 +5,7 @@ from rest_framework.compat import authenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.models import Profile
+from .models import Profile
 from .serializers import SignupSerializer, UserSerializer, ProfileSerializer
 
 User = get_user_model()
