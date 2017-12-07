@@ -72,6 +72,7 @@ class Restaurant(models.Model):
     address = map_fields.AddressField(max_length=200)
     # fixme requests로 받아올 수 있게 처리
     geolocation = map_fields.GeoLocationField(max_length=100)
+    # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
     description = models.TextField()
