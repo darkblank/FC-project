@@ -37,14 +37,10 @@ class ReservationCreateView(generics.GenericAPIView,
                             mixins.CreateModelMixin,
                             ):
     serializer_class = ReservationSerializer
-
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        queryset = ReservationInfo.objects.get(pk=pk)
-        return queryset
+    queryset = ReservationInfo.objects.all()
 
     def perform_create(self, serializer):
-        information = get_object_or_404(ReservationInfo, pk=self.kwargs['pk'])
+        information = self.get_object()
         serializer.save(
             user=self.request.user,
             information=information,
