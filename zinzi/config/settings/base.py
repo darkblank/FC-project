@@ -26,7 +26,7 @@ config_secret_common = json.loads(open(CONFIG_SECRET_COMMON_FILE).read())
 
 # Static paths
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_URL = 'https://s3.ap-northeast-2.amazonaws.com/zinzi/'
 STATIC_ROOT = os.path.join(ROOT_DIR, '.static_root')
 STATICFILES_DIRS = [
     STATIC_DIR,
