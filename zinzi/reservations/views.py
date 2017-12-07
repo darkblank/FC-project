@@ -33,9 +33,9 @@ class PaymentDetailView(generics.RetrieveAPIView):
 
 
 # fix me
-class ReservationDetailCreateView(generics.GenericAPIView,
-                                  mixins.CreateModelMixin,
-                                  mixins.RetrieveModelMixin):
+class ReservationCreateView(generics.GenericAPIView,
+                            mixins.CreateModelMixin,
+                            ):
     serializer_class = ReservationSerializer
 
     def get_queryset(self):
