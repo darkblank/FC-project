@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/reservation/$', ReservationCreateView.as_view(), name='reservation-create'),
     # 결제정보 url
     url(r'^payment/$', PaymentCreateView.as_view(), name='payment'),
-    url(r'^(?P<pk>\d+)/payment/$', PaymentDetailUpdateView.as_view(), name='payment-detailupdate'),
+    url(r'^(?P<imp_uid>imp_\d+)/payment/$', PaymentDetailUpdateView.as_view(), name='payment-detailupdate'),
 
     # 결제 테스트용 url
     url(r'^test/$', test)

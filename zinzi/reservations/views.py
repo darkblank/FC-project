@@ -30,6 +30,7 @@ class PaymentCreateView(APIView):
 class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    lookup_field = 'imp_uid'
 
 
 # fix me
