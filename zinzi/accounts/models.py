@@ -86,6 +86,7 @@ class Profile(models.Model):
     nickname = models.CharField(
         max_length=10,
         unique=True,
+        blank=True,
     )
     user_type = models.CharField(
         max_length=1,
