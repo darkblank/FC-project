@@ -1,13 +1,16 @@
 from django.conf.urls import url
 
 from reservations.views import PaymentCreateView, test, PaymentDetailUpdateView, \
-    ReservationCreateView, CustomerReservationListView, CustomerReservationDetailView
+    ReservationCreateView, CustomerReservationListView, CustomerReservationDetailView, RestaurantReservationListView
 
 urlpatterns = [
     # 예약정보 url
     url(r'^(?P<pk>\d+)/reservation/$', ReservationCreateView.as_view(), name='reservation-create'),
+
     url(r'^customer/$', CustomerReservationListView.as_view(), name='customer-reservation-list'),
     url(r'^(?P<pk>\d+)/customer/$', CustomerReservationDetailView.as_view(), name='customer-reservation-detail'),
+
+    url(r'^(?P<pk>\d+)/restaurant/$', RestaurantReservationListView.as_view(), name='restaurant-reservation-list'),
 
     # 결제정보 url
     url(r'^payment/$', PaymentCreateView.as_view(), name='payment'),

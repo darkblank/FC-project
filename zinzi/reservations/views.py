@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
 from rest_framework import generics
 from rest_framework import mixins
@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from reservations.models import Payment, Reservation
 from reservations.serializers import PaymentSerializer, ReservationSerializer
-from restaurants.models import ReservationInfo
+from restaurants.models import ReservationInfo, Restaurant
 
 User = get_user_model()
 
@@ -49,6 +49,16 @@ class CustomerReservationDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         queryset = Reservation.objects.filter(user=self.request.user)
+        return queryset
+
+
+class RestaurantReservationListView(generics.ListAPIView):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        queryset = Reservation.objects.filter(restaurant=restaurant)
         return queryset
 
 
