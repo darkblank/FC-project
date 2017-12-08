@@ -2,7 +2,7 @@ from datetime import time, datetime
 
 import dateutil.parser
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Avg
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -71,7 +71,6 @@ STAR_RATING = (
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)
-    # fixme requests로 받아올 수 있게 처리
     geolocation = map_fields.GeoLocationField(max_length=100)
     # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
@@ -89,13 +88,26 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
+    # 댓글 작성시 호출됨
     def calculate_goten_star_rate(self):
         queryset = Comment.objects.filter(restaurant=self)
-        star_rate = queryset.aggregate(Sum('star_rate'))
-        count_star_rate = queryset.count()
-        self.star_rate = star_rate['star_rate__sum'] / count_star_rate
+        # 쿼리셋의 aggregation기능을 사용해 평균값을 계산
+        star_rate = queryset.aggregate(Avg('star_rate'))
+        # aggregation은 딕셔너리 형태로 나오므로 키값을 넣어 value를 star_rate에 넣고 저장
+        self.star_rate = star_rate['star_rate__avg']
         self.save()
-        return star_rate
+
+    @classmethod
+    def get_filtered_list(cls, res_type, price):
+        queryset = cls.objects.all()
+        if res_type is None and price is None:
+            return queryset
+        elif res_type is None and price:
+            return queryset.filter(average_price=price)
+        elif res_type and price is None:
+            return queryset.filter(restaurant_type=res_type)
+        else:
+            return queryset.filter(restaurant_type=res_type, average_price=price)
 
 
 class ImageForRestaurant(models.Model):
@@ -137,8 +149,8 @@ class ReservationInfo(models.Model):
         raise ValidationError('party가 int 형식이 아닙니다.')
 
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
-    @staticmethod
-    def check_acceptable_time(res_pk, party, date):
+    @classmethod
+    def check_acceptable_time(cls, res_pk, party, date):
         restaurant = get_object_or_404(Restaurant, pk=res_pk)
         # string으로 온 date값을 python에서 사용하는 datetime type으로 파싱 진행
         # 파싱을 진행하며 잘못된 값이 올 경우 None객체 반환
@@ -153,7 +165,7 @@ class ReservationInfo(models.Model):
         if not party:
             return None
         if party.isdigit() and isinstance(parsed_date, datetime):
-            return ReservationInfo.objects.filter(
+            return cls.objects.filter(
                 restaurant=restaurant,
                 acceptable_size_of_party__gte=party,
                 date=date,

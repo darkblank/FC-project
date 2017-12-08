@@ -20,17 +20,9 @@ class RestaurantListView(generics.ListAPIView):
     # Querystring으로 전달된 type, price에 대해서 filter를 걸어 리턴하도록 설정
     # fixme district 필터를 추가해야함
     def get_queryset(self):
-        restaurant_type = self.request.query_params.get('type', None)
-        average_price = self.request.query_params.get('price', None)
-        queryset = Restaurant.objects.all()
-        if restaurant_type is None and average_price is None:
-            return queryset
-        elif restaurant_type is None and average_price:
-            return queryset.filter(average_price=average_price)
-        elif restaurant_type and average_price is None:
-            return queryset.filter(restaurant_type=restaurant_type)
-        else:
-            return queryset.filter(restaurant_type=restaurant_type, average_price=average_price)
+        res_type = self.request.query_params.get('type', None)
+        price = self.request.query_params.get('price', None)
+        return Restaurant.get_filtered_list(res_type=res_type, price=price)
 
 
 class RestaurantDetailView(generics.RetrieveAPIView):
