@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from iamport import Iamport
 from rest_framework import generics
 from rest_framework import mixins
@@ -40,9 +40,7 @@ class CustomerReservationListView(generics.ListAPIView):
     serializer_class = ReservationSerializer
 
     def get_queryset(self):
-        email = self.kwargs['email']
-        user = get_object_or_404(email=email)
-        queryset = Reservation.objects.filter(user=user)
+        queryset = Reservation.objects.filter(user=self.request.user)
         return queryset
 
 
