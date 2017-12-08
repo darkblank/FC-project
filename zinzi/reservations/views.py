@@ -15,6 +15,23 @@ def test(request):
     return render(request, 'test.html')
 
 
+class ReservationCreateView(generics.GenericAPIView,
+                            mixins.CreateModelMixin,
+                            ):
+    serializer_class = ReservationSerializer
+    queryset = ReservationInfo.objects.all()
+
+    def perform_create(self, serializer):
+        information = self.get_object()
+        serializer.save(
+            user=self.request.user,
+            information=information,
+        )
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class PaymentCreateView(APIView):
     def post(self, request):
         iamport = Iamport(imp_key='6343293486082258',
@@ -35,20 +52,3 @@ class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     lookup_field = 'imp_uid'
-
-
-class ReservationCreateView(generics.GenericAPIView,
-                            mixins.CreateModelMixin,
-                            ):
-    serializer_class = ReservationSerializer
-    queryset = ReservationInfo.objects.all()
-
-    def perform_create(self, serializer):
-        information = self.get_object()
-        serializer.save(
-            user=self.request.user,
-            information=information,
-        )
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
