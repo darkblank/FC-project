@@ -1,12 +1,16 @@
-from rest_framework import generics, permissions, mixins
+from rest_framework import generics, permissions
 from rest_framework.exceptions import ParseError
-from rest_framework.generics import get_object_or_404
 
-from utils.permissions import IsOwnerOrReadOnly, IsAuthorOrReadOnly
-from .models import Restaurant, ReservationInfo, Comment
-from .pagination import RestaurantListPagination, CommentListPagination
-from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer, \
-    CommentSerializer
+from utils.permissions import IsOwnerOrReadOnly
+from ..models import Restaurant, ReservationInfo
+from ..pagination import RestaurantListPagination
+from ..serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
+
+__all__ = (
+    'RestaurantListView',
+    'RestaurantDetailView',
+    'CheckOpenedTimeView',
+)
 
 
 class RestaurantListView(generics.ListAPIView):
@@ -51,36 +55,3 @@ class CheckOpenedTimeView(generics.ListAPIView):
         if queryset is None:
             raise ParseError('party 또는 date가 정상적으로 입력되지 않았습니다.')
         return queryset
-
-
-class CommentListCreateView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
-    pagination_class = CommentListPagination
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-    )
-
-    def get_queryset(self):
-        res_pk = self.kwargs['pk']
-        queryset = Comment.objects.filter(restaurant_id=res_pk)
-        return queryset
-
-    def perform_create(self, serializer):
-        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
-        serializer.save(restaurant=restaurant, author=self.request.user)
-        restaurant.calculate_goten_star_rate()
-
-
-class CommentUpdateDestroyView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly,
-    )
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
