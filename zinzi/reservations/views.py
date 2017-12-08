@@ -62,6 +62,17 @@ class RestaurantReservationListView(generics.ListAPIView):
         return queryset
 
 
+class RestaurantReservationDetailView(generics.RetrieveAPIView):
+    serializer_class = ReservationSerializer
+    lookup_url_kwarg = 'reserve_pk'
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        queryset = Reservation.objects.filter(restaurant=restaurant)
+        return queryset
+
+
 # 가격 불일치시 메일이나 문자 보내주는 메서드도 추가 필요
 class PaymentCreateView(APIView):
     def post(self, request):
