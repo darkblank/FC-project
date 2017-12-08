@@ -59,6 +59,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
         )
 
-    def create(self, validated_data):
-        obj = Profile.objects.create(**validated_data)
-        return obj
+
+class ProfileImageSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'pk',
+            'profile',
+        )

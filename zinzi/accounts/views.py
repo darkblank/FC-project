@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,9 +12,34 @@ from .serializers import SignupSerializer, UserSerializer, ProfileSerializer
 User = get_user_model()
 
 
-class Signup(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = SignupSerializer
+class Signup(APIView):
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            # 이메일 인증을 할 시 True로 바뀜 (현재 기본값은 True)
+            user.is_active = True
+            user.save()
+            # current_site = get_current_site(request)
+            # mail_subject = '[Zinzi] 이메일 인증'
+            # message = render_to_string('<activation.html>', {
+            #     'user': user,
+            #     'domain': current_site.domain,
+            #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            #     'token': account_activation_token.make_token(user),
+            # })
+            # to_email = serializer.validated_data['email']
+            # email = EmailMessage(
+            #     mail_subject,
+            #     message,
+            #     to=[to_email],
+            # )
+            # email.send()
+            Profile.objects.create(user=user)
+            data = {
+                'user': serializer.data,
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
 
 
 class Signin(APIView):
@@ -41,12 +67,19 @@ class Signin(APIView):
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class ProfileCreate(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-    )
+class Signout(APIView):
+    queryset = User.objects.all()
 
-    def perform_create(self, serializer):
-        serializer.save(profile=self.request.user.profile)
+    def get(self, request):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+class ProfileUpdate(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+    lookup_url_kwarg = 'pk'
+    lookup_field = 'user'
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+    )

@@ -87,6 +87,7 @@ class Profile(models.Model):
         max_length=10,
         unique=True,
         blank=True,
+        null=True,
     )
     user_type = models.CharField(
         max_length=1,
@@ -114,6 +115,9 @@ class Profile(models.Model):
     joined_date = models.DateField(
         auto_now_add=True,
     )
+
+    def __str__(self):
+        return self.user.email
 
 
 class Preference(models.Model):
