@@ -13,6 +13,7 @@ class Reservation(models.Model):
         ReservationInfo,
         on_delete=models.PROTECT,
     )
+    name = models.CharField(max_length=10)
     party = models.PositiveSmallIntegerField()
     price = models.PositiveIntegerField()
     phone_number = models.CharField(max_length=11)
