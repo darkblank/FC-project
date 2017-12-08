@@ -16,7 +16,7 @@ class Command(BaseCommand):
                 author=user,
                 restaurant=Restaurant.objects.first(),
                 star_rate=STAR_RATING[randint(1, len(STAR_RATING) - 1)][0],
-                comment=f'Test Comment {rest.pk}'
+                comment=f'Test Comment {i}'
             )
 
     print("Successfully create dummy Comments")
