@@ -117,7 +117,7 @@ class ReservationInfo(models.Model):
 
     def save(self, *args, **kwargs):
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
-        if not self.acceptable_size_of_party:
+        if self.acceptable_size_of_party is None:
             self.acceptable_size_of_party = self.restaurant.maximum_party
         self.price = CONVERT_TO_PRICE[self.restaurant.average_price]
         return super().save(*args, **kwargs)
@@ -127,6 +127,7 @@ class ReservationInfo(models.Model):
             return self.price * party
         raise ValidationError
 
+    # 예약시 호출하여 해당 시간의 허용 가능한 인원수를 수정할수 있게 할 수 있는 메서드생성
     def acceptable_size_of_party_update(self, party):
         if isinstance(party, int):
             self.acceptable_size_of_party -= party
