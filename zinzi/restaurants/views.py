@@ -2,9 +2,9 @@ from rest_framework import generics, permissions, mixins
 from rest_framework.exceptions import ParseError
 from rest_framework.generics import get_object_or_404
 
+from utils.permissions import IsOwnerOrReadOnly, IsAuthorOrReadOnly
 from .models import Restaurant, ReservationInfo, Comment
 from .pagination import RestaurantListPagination, CommentListPagination
-from utils.permissions import IsOwnerOrReadOnly, IsAuthorOrReadOnly
 from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer, \
     CommentSerializer
 
@@ -71,7 +71,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
         restaurant.calculate_goten_star_rate()
 
 
-class CommentUpdateDestroyView(generics.GenericAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+class CommentUpdateDestroyView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (

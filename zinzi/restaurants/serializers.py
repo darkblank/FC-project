@@ -68,6 +68,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = (
+            'pk',
             'author',
             'restaurant',
             'star_rate',
