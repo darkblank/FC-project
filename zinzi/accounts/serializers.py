@@ -60,8 +60,17 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
 
 
+class PureProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            'profile_image',
+            'nickname',
+        )
+
+
 class ProfileImageSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
+    profile = PureProfileSerializer(read_only=True)
 
     class Meta:
         model = User
