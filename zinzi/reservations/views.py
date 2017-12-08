@@ -44,6 +44,15 @@ class CustomerReservationListView(generics.ListAPIView):
         return queryset
 
 
+class CustomerReservationDetailView(generics.RetrieveAPIView):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        queryset = Reservation.objects.filter(user=self.request.user)
+        return queryset
+
+
+# 가격 불일치시 메일이나 문자 보내주는 메서드도 추가 필요
 class PaymentCreateView(APIView):
     def post(self, request):
         iamport = Iamport(imp_key='6343293486082258',
