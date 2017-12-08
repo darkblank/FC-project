@@ -6,7 +6,7 @@ from reservations.views import PaymentCreateView, test, PaymentDetailUpdateView,
 urlpatterns = [
     # 예약정보 url
     url(r'^(?P<pk>\d+)/reservation/$', ReservationCreateView.as_view(), name='reservation-create'),
-    url(r'^customer/reservation/$', CustomerReservationListView.as_view(), name='customer-reservation-list'),
+    url(r'^customer/$', CustomerReservationListView.as_view(), name='customer-reservation-list'),
 
     # 결제정보 url
     url(r'^payment/$', PaymentCreateView.as_view(), name='payment'),
