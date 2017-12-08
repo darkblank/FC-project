@@ -11,7 +11,7 @@ User = get_user_model()
 
 path = list()
 for i in range(1, 6):
-    path.append(os.path.join(settings.STATIC_URL, 'testimage', 'test' + str(i) + '.png'))
+    path.append('https://s3.ap-northeast-2.amazonaws.com/zinzi/static/testimage/test' + str(i) + '.png')
 
 
 class Command(BaseCommand):
