@@ -10,14 +10,14 @@ from restaurants.models import Restaurant, CHOICES_RESTAURANT_TYPE, CHOICES_PRIC
 User = get_user_model()
 
 path = list()
-for i in range(1, 5):
-    path += os.path.join(settings.STATIC_DIR, 'testimage', 'test' + str(i) + '.png')
+for i in range(1, 6):
+    path.append(os.path.join(settings.STATIC_URL, 'testimage', 'test' + str(i) + '.png'))
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        if Restaurant.objects.all().count() < 500:
-            for i in range(500):
+        if Restaurant.objects.all().count() < 11:
+            for i in range(11):
                 Restaurant.objects.create(
                     name='Dummy Restaurant' + str(i),
                     address='Dummy address' + str(i),
