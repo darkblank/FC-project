@@ -127,6 +127,13 @@ class ReservationInfo(models.Model):
             return self.price * party
         raise ValidationError
 
+    def acceptable_size_of_party_update(self, party):
+        if isinstance(party, int):
+            self.acceptable_size_of_party -= party
+            self.save()
+            return True
+        raise ValidationError('party가 int 형식이 아닙니다.')
+
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
     @staticmethod
     def check_acceptable_time(res_pk, party, date):
@@ -141,6 +148,8 @@ class ReservationInfo(models.Model):
             parsed_date = None
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
+        if not party:
+            return None
         if party.isdigit() and isinstance(parsed_date, datetime):
             return ReservationInfo.objects.filter(
                 restaurant=restaurant,
