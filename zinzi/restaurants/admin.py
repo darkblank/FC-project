@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_google_maps import fields as map_fields
 
-from restaurants import widgets
+from utils import widgets
 from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment
 
 
