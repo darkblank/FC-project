@@ -1,7 +1,7 @@
 from django.db import models
 
 from accounts.models import User
-from restaurants.models import ReservationInfo
+from restaurants.models import ReservationInfo, Restaurant
 
 
 class Reservation(models.Model):
@@ -11,6 +11,10 @@ class Reservation(models.Model):
     )
     information = models.ForeignKey(
         ReservationInfo,
+        on_delete=models.PROTECT,
+    )
+    restaurant = models.ForeignKey(
+        Restaurant,
         on_delete=models.PROTECT,
     )
     name = models.CharField(max_length=10)

@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
 from rest_framework import generics
 from rest_framework import mixins
@@ -6,9 +7,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Payment
+from reservations.models import Payment, Reservation
 from reservations.serializers import PaymentSerializer, ReservationSerializer
 from restaurants.models import ReservationInfo
+
+User = get_user_model()
 
 
 def test(request):
@@ -26,10 +29,21 @@ class ReservationCreateView(generics.GenericAPIView,
         serializer.save(
             user=self.request.user,
             information=information,
+            restaurant=information.restaurant,
         )
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class CustomerReservationListView(generics.ListAPIView):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        email = self.kwargs['email']
+        user = get_object_or_404(email=email)
+        queryset = Reservation.objects.filter(user=user)
+        return queryset
 
 
 class PaymentCreateView(APIView):
