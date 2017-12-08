@@ -1,10 +1,10 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, mixins
 from rest_framework.exceptions import ParseError
 from rest_framework.generics import get_object_or_404
 
 from .models import Restaurant, ReservationInfo, Comment
 from .pagination import RestaurantListPagination, CommentListPagination
-from .permissions import IsOwnerOrReadOnly
+from utils.permissions import IsOwnerOrReadOnly, IsAuthorOrReadOnly
 from .serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer, \
     CommentSerializer
 
@@ -69,3 +69,18 @@ class CommentListCreateView(generics.ListCreateAPIView):
         restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
         serializer.save(restaurant=restaurant, author=self.request.user)
         restaurant.calculate_goten_star_rate()
+
+
+class CommentUpdateDestroyView(generics.GenericAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrReadOnly,
+    )
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
