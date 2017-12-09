@@ -73,24 +73,26 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(models.Model):
-    USER_TYPE_CUSTOMER = 'c'
+    USER_TYPE_EMAIL = 'e'
     USER_TYPE_FACEBOOK = 'f'
     CHOICES_USER_TYPE = (
-        (USER_TYPE_CUSTOMER, 'Customer'),
+        (USER_TYPE_EMAIL, 'Email'),
         (USER_TYPE_FACEBOOK, 'Facebook'),
     )
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+    )
     nickname = models.CharField(
         max_length=10,
         unique=True,
+        blank=True,
+        null=True,
     )
     user_type = models.CharField(
         max_length=1,
         choices=CHOICES_USER_TYPE,
-        default=USER_TYPE_CUSTOMER,
-    )
-    phone_number = models.CharField(
-        max_length=13,
+        default=USER_TYPE_EMAIL,
     )
     profile_image = models.ImageField(
         upload_to='user',
@@ -99,11 +101,13 @@ class Profile(models.Model):
     )
     preferences = models.ManyToManyField(
         'Preference',
-        related_name='preference_set'
+        related_name='preference_set',
+        blank=True
     )
     favorites = models.ManyToManyField(
         'restaurants.Restaurant',
-        related_name='favorite_set'
+        related_name='favorite_set',
+        blank=True,
     )
     is_owner = models.BooleanField(
         default=False,
@@ -111,6 +115,9 @@ class Profile(models.Model):
     joined_date = models.DateField(
         auto_now_add=True,
     )
+
+    def __str__(self):
+        return self.user.email
 
 
 class Preference(models.Model):

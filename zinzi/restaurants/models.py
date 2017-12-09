@@ -2,7 +2,7 @@ from datetime import time, datetime
 
 import dateutil.parser
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Avg
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -33,7 +33,6 @@ CONVERT_TO_PRICE = {
     'e': 20000,
     'v': 40000,
 }
-
 CHOICES_TIME = (
     (time(9, 00, 00), '9시'),
     (time(10, 00, 00), '10시'),
@@ -47,10 +46,11 @@ CHOICES_TIME = (
     (time(18, 00, 00), '18시'),
     (time(19, 00, 00), '19시'),
     (time(20, 00, 00), '20시'),
-    (time(20, 00, 00), '21시'),
+    (time(21, 00, 00), '21시'),
 )
 
 STAR_RATING = (
+    (0, 0),
     (0.5, 0.5),
     (1, 1),
     (1.5, 1.5),
@@ -71,8 +71,8 @@ STAR_RATING = (
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)
-    # fixme requests로 받아올 수 있게 처리
     geolocation = map_fields.GeoLocationField(max_length=100)
+    # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
     joined_date = models.DateField(auto_now_add=True)
     description = models.TextField()
@@ -88,12 +88,26 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
+    # 댓글 작성시 호출됨
     def calculate_goten_star_rate(self):
-        star_rate = Comment.objects.filter(restaurant=self).aggregate(Sum('star_rate'))
-        count_star_rate = Comment.objects.filter(restaurant=self).count()
-        self.star_rate = star_rate['star_rate__sum'] / count_star_rate
+        queryset = Comment.objects.filter(restaurant=self)
+        # 쿼리셋의 aggregation기능을 사용해 평균값을 계산
+        star_rate = queryset.aggregate(Avg('star_rate'))
+        # aggregation은 딕셔너리 형태로 나오므로 키값을 넣어 value를 star_rate에 넣고 저장
+        self.star_rate = star_rate['star_rate__avg']
         self.save()
-        return star_rate
+
+    @classmethod
+    def get_filtered_list(cls, res_type, price):
+        queryset = cls.objects.all()
+        if res_type is None and price is None:
+            return queryset
+        elif res_type is None and price:
+            return queryset.filter(average_price=price)
+        elif res_type and price is None:
+            return queryset.filter(restaurant_type=res_type)
+        else:
+            return queryset.filter(restaurant_type=res_type, average_price=price)
 
 
 class ImageForRestaurant(models.Model):
@@ -116,7 +130,7 @@ class ReservationInfo(models.Model):
 
     def save(self, *args, **kwargs):
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
-        if not self.acceptable_size_of_party:
+        if self.acceptable_size_of_party is None:
             self.acceptable_size_of_party = self.restaurant.maximum_party
         self.price = CONVERT_TO_PRICE[self.restaurant.average_price]
         return super().save(*args, **kwargs)
@@ -126,9 +140,17 @@ class ReservationInfo(models.Model):
             return self.price * party
         raise ValidationError
 
+    # 예약시 호출하여 해당 시간의 허용 가능한 인원수를 수정할수 있게 할 수 있는 메서드생성
+    def acceptable_size_of_party_update(self, party):
+        if isinstance(party, int):
+            self.acceptable_size_of_party -= party
+            self.save()
+            return True
+        raise ValidationError('party가 int 형식이 아닙니다.')
+
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
-    @staticmethod
-    def check_acceptable_time(res_pk, party, date):
+    @classmethod
+    def check_acceptable_time(cls, res_pk, party, date):
         restaurant = get_object_or_404(Restaurant, pk=res_pk)
         # string으로 온 date값을 python에서 사용하는 datetime type으로 파싱 진행
         # 파싱을 진행하며 잘못된 값이 올 경우 None객체 반환
@@ -136,10 +158,14 @@ class ReservationInfo(models.Model):
             parsed_date = dateutil.parser.parse(date)
         except ValueError:
             parsed_date = None
+        except TypeError:
+            parsed_date = None
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
+        if not party:
+            return None
         if party.isdigit() and isinstance(parsed_date, datetime):
-            return ReservationInfo.objects.filter(
+            return cls.objects.filter(
                 restaurant=restaurant,
                 acceptable_size_of_party__gte=party,
                 date=date,
