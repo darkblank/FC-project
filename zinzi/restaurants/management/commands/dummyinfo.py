@@ -1,5 +1,4 @@
 from datetime import datetime
-from random import randint
 
 from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
@@ -15,7 +14,7 @@ class Command(BaseCommand):
         for i in range(13):
             ReservationInfo.objects.create(
                 restaurant=restaurant,
-                time=CHOICES_TIME[i-1][0],
+                time=CHOICES_TIME[i - 1][0],
                 date=datetime.today()
             )
-        print("Successfully create dummy infos")
+        print("Successfully create dummy info")
