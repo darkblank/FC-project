@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Reservation
+from reservations.models import Reservation, Payment
 from reservations.serializers import PaymentSerializer, ReservationSerializer
 from restaurants.models import ReservationInfo, Restaurant
 
@@ -91,7 +91,8 @@ class PaymentCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
-#     queryset = Payment.objects.all()
-#     serializer_class = PaymentSerializer
-#     lookup_field = 'imp_uid'
+
+class PaymentDetailView(generics.RetrieveAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    lookup_field = 'imp_uid'
