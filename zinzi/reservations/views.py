@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Payment, Reservation
+from reservations.models import Reservation
 from reservations.serializers import PaymentSerializer, ReservationSerializer
 from restaurants.models import ReservationInfo, Restaurant
 
@@ -74,6 +74,7 @@ class RestaurantReservationDetailView(generics.RetrieveAPIView):
 
 
 # 가격 불일치시 메일이나 문자 보내주는 메서드도 추가 필요
+# status==paid 인지 확인 필요
 class PaymentCreateView(APIView):
     def post(self, request, pk):
         reservation = get_object_or_404(Reservation, pk=pk)
@@ -89,7 +90,6 @@ class PaymentCreateView(APIView):
             serializer.save(reservation=reservation)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
 #     queryset = Payment.objects.all()
