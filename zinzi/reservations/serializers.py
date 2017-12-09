@@ -5,14 +5,6 @@ from reservations.models import Payment, Reservation
 from restaurants.serializers import ReservationInfoSerializer, RestaurantListSerializer
 
 
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = (
-            '__all__'
-        )
-
-
 class ReservationSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     information = ReservationInfoSerializer(read_only=True)
@@ -20,6 +12,16 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
+        fields = (
+            '__all__'
+        )
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    reservation = ReservationSerializer(read_only=True)
+
+    class Meta:
+        model = Payment
         fields = (
             '__all__'
         )

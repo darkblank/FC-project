@@ -75,7 +75,8 @@ class RestaurantReservationDetailView(generics.RetrieveAPIView):
 
 # 가격 불일치시 메일이나 문자 보내주는 메서드도 추가 필요
 class PaymentCreateView(APIView):
-    def post(self, request):
+    def post(self, request, pk):
+        reservation = get_object_or_404(Reservation, pk=pk)
         iamport = Iamport(imp_key='6343293486082258',
                           imp_secret='JEAB6oXOMsc2oysgdu4tJzlfgQvn5sfP7Qqefn21Qe3fNwv11zuL9Q0qGvNMY2B6T1l8pn9fCdvpK0rL')
         payment = iamport.find(imp_uid=request.data.get('imp_uid'))
@@ -85,7 +86,7 @@ class PaymentCreateView(APIView):
         else:
             serializer = PaymentSerializer(data=payment)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(reservation=reservation)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
