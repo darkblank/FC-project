@@ -91,7 +91,7 @@ class PaymentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-    lookup_field = 'imp_uid'
+# class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
+#     queryset = Payment.objects.all()
+#     serializer_class = PaymentSerializer
+#     lookup_field = 'imp_uid'
