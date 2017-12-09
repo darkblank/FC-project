@@ -47,3 +47,8 @@ class Payment(models.Model):
     buyer_name = models.CharField(max_length=10)
     buyer_email = models.CharField(max_length=30)
     buyer_tel = models.CharField(max_length=20)
+    # Reservation 모델 연결
+    reservation = models.OneToOneField(
+        Reservation,
+        on_delete=models.PROTECT,
+    )
