@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
@@ -78,8 +79,8 @@ class RestaurantReservationDetailView(generics.RetrieveAPIView):
 class PaymentCreateView(APIView):
     def post(self, request, pk):
         reservation = get_object_or_404(Reservation, pk=pk)
-        iamport = Iamport(imp_key='6343293486082258',
-                          imp_secret='JEAB6oXOMsc2oysgdu4tJzlfgQvn5sfP7Qqefn21Qe3fNwv11zuL9Q0qGvNMY2B6T1l8pn9fCdvpK0rL')
+        iamport = Iamport(imp_key=settings.IMP_KEY,
+                          imp_secret=settings.IMP_SECRET)
         payment = iamport.find(imp_uid=request.data.get('imp_uid'))
         if not iamport.is_paid(int(request.data.get('price')), imp_uid=request.data.get('imp_uid')):
             cancel = iamport.cancel(u'가격 불일치', imp_uid=request.data.get('imp_uid'))

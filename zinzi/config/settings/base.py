@@ -48,6 +48,10 @@ EMAIL_HOST_PASSWORD = config_secret_common['email']['password']
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Iamport
+IMP_KEY = config_secret_common['iamport']['imp_key']
+IMP_SECRET = config_secret_common['iamport']['imp_secret']
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
