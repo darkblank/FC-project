@@ -39,7 +39,7 @@ class CheckOpenedTimeView(generics.ListAPIView):
     serializer_class = ReservationInfoSerializer
 
     def get_queryset(self):
-        # queryset에서 parameter값을 받아옴
+        # querystring에서 parameter값을 받아옴
         res_pk = self.kwargs['pk']
         party = self.request.query_params.get('party', None)
         date = self.request.query_params.get('date', None)
