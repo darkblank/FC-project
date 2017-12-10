@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^signin/$', views.Signin.as_view(), name='signin'),
     url(r'^signout/$', views.Signout.as_view(), name='signout'),
     url(r'^(?P<pk>\d+)/profile/$', views.ProfileUpdate.as_view(), name='profile'),
+    # url(r'^(?P<pk>\d+)/preference/$', views.PreferenceUpdate.as_view(), name='preference')
     # url(r'(?P<user_pk>\d+)/my-reservation/$' ),
 ]

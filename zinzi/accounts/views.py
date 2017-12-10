@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer
+from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, PreferenceSerializer
 
 User = get_user_model()
 
@@ -80,6 +80,16 @@ class ProfileUpdate(generics.RetrieveUpdateAPIView):
     queryset = Profile.objects.all()
     lookup_url_kwarg = 'pk'
     lookup_field = 'user'
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+    )
+
+
+class PreferenceUpdate(generics.RetrieveUpdateAPIView):
+    serializer_class = PreferenceSerializer
+    queryset = Profile.objects.all()
+    lookup_url_kwarg = 'pk'
+    lookup_field = 'user',
     permission_classes = (
         IsAuthenticatedOrReadOnly,
     )
