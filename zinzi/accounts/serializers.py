@@ -56,6 +56,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = (
             'profile_image',
             'nickname',
+            'preferences',
             'user',
         )
 
@@ -77,4 +78,15 @@ class ProfileImageSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'profile',
+        )
+
+
+class PreferenceSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'preferences',
+            'user',
         )

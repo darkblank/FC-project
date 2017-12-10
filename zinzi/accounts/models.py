@@ -140,3 +140,6 @@ class Preference(models.Model):
         choices=CHOICES_FOOD_TYPE,
         blank=True,
     )
+
+    def __str__(self):
+        return self.preferences
