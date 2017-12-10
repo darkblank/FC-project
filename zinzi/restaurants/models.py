@@ -4,7 +4,8 @@ import dateutil.parser
 from django.db import models
 from django.db.models import Avg
 from django_google_maps import fields as map_fields
-from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
 CHOICES_RESTAURANT_TYPE = (
@@ -160,6 +161,11 @@ class ReservationInfo(models.Model):
             parsed_date = None
         except TypeError:
             parsed_date = None
+        try:
+            if date != parsed_date.strftime('%Y-%m-%d'):
+                raise ParseError('date의 형식이 맞지 않습니다.')
+        except AttributeError:
+            raise ParseError('date의 형식이 맞지 않습니다.')
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
         if not party and parsed_date is None:
@@ -167,7 +173,7 @@ class ReservationInfo(models.Model):
         # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
         # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
         if parsed_date < dateutil.parser.parse((datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d')):
-            raise ValidationError('date가 오늘보다 이전입니다.')
+            raise ParseError('date가 오늘보다 이전입니다.')
         if party.isdigit() and parsed_date:
             return cls.objects.filter(
                 restaurant=restaurant,
