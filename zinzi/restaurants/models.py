@@ -130,6 +130,8 @@ class ReservationInfo(models.Model):
         return f'{self.restaurant} - [{self.date}-{self.time}]'
 
     def save(self, *args, **kwargs):
+        if ReservationInfo.objects.filter(restaurant=self.restaurant, time=self.time, date=self.date).count():
+            raise ValueError('This ReservationInfo is already exist')
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
         if self.acceptable_size_of_party is None:
             self.acceptable_size_of_party = self.restaurant.maximum_party
