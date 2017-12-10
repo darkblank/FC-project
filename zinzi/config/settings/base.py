@@ -137,7 +137,8 @@ REST_FRAMEWORK = {
 }
 
 # Google Maps
-GOOGLE_MAPS_API_KEY = 'AIzaSyBJxJaeePwWjht9T6dms7hyki4-9m8gPxg'
+GOOGLE_MAPS_API_KEY = config_secret_common['geocoding']['secret_key']
+GOOGLE_MAPS_API_URL = 'http://maps.googleapis.com/maps/api/geocode/json'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

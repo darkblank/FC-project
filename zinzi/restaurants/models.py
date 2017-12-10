@@ -1,10 +1,12 @@
+import re
 from datetime import time, datetime, timedelta
 
 import dateutil.parser
+import requests
+from django.conf import settings
 from django.db import models
 from django.db.models import Avg
 from django_google_maps import fields as map_fields
-from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
@@ -72,6 +74,7 @@ STAR_RATING = (
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)
+    district = models.CharField(null=False, blank=True, max_length=20)
     geolocation = map_fields.GeoLocationField(max_length=100)
     # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
@@ -88,6 +91,24 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.district:
+            # Google goecoding에 검색할 parameter값 지정
+            params = {
+                'address': self.address,
+                'language': 'ko'
+            }
+            res = requests.get(settings.GOOGLE_MAPS_API_URL, params=params).json()
+            # 반환되는 값에서 구가 들어오는 위치의 값 추출(정상적으로 입력하였을 경우)
+            district = res['results'][0]['address_components'][2]['long_name']
+            # 정규표현식으로 추출하여 '구'로 끝나는지 값을 찾아 re_district에 저장
+            re_district = re.search('\w{2,3}구', district)
+            # None Type일 경우 즉, 정규표현식에서 '구'로 끝나는 값을 찾지 못했을 경우 ValueError를 일으킴
+            if re_district is None:
+                raise ValueError('구 입력이 정상적이지 않습니다.')
+            self.district = re_district.group()
+        return super().save(*args, **kwargs)
 
     # 댓글 작성시 호출됨
     def calculate_goten_star_rate(self):
