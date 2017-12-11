@@ -83,6 +83,7 @@ class Restaurant(models.Model):
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = models.ImageField(upload_to='thumbnail')
+    # fixme menu image model 추가
     menu = models.ImageField(upload_to='menu')
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
@@ -195,8 +196,18 @@ class ReservationInfo(models.Model):
             return None
         # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
         # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
-        if parsed_date < dateutil.parser.parse((datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d')):
+        now_date = datetime.now() + timedelta(hours=9)
+        parsed_now_date = dateutil.parser.parse((datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d'))
+        if parsed_date < parsed_now_date:
             raise ParseError('date가 오늘보다 이전입니다.')
+        if parsed_date.date() == now_date.date():
+            return cls.objects.filter(
+                restaurant=restaurant,
+                acceptable_size_of_party__gte=party,
+                date=parsed_date,
+                # fixme time 필터 추가 필요 (금일 일 경우 현재 시간보다 이전만 가능하게)
+                time__hour__gt=now_date.hour,
+            )
         if party.isdigit() and parsed_date:
             return cls.objects.filter(
                 restaurant=restaurant,
