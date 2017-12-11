@@ -37,6 +37,11 @@ class ReservationCreateView(generics.GenericAPIView,
         return self.create(request, *args, **kwargs)
 
 
+class ReservationPatchView(generics.UpdateAPIView):
+    serializer_class = ReservationSerializer
+    queryset = Reservation.objects.all()
+
+
 class CustomerReservationListView(generics.ListAPIView):
     serializer_class = ReservationSerializer
 
