@@ -17,11 +17,11 @@ class Reservation(models.Model):
         Restaurant,
         on_delete=models.PROTECT,
     )
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, blank=True, null=True)
     party = models.PositiveSmallIntegerField()
     price = models.PositiveIntegerField()
-    phone_number = models.CharField(max_length=11)
-    email = models.CharField(max_length=30)
+    phone_number = models.CharField(max_length=11, blank=True, null=True)
+    email = models.CharField(max_length=30, blank=True, null=True)
 
 
 class Payment(models.Model):
