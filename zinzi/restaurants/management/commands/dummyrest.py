@@ -20,7 +20,7 @@ class Command(BaseCommand):
             for i in range(11):
                 Restaurant.objects.create(
                     name='Dummy Restaurant' + str(i),
-                    address='Dummy address' + str(i),
+                    address='패스트캠퍼스',
                     geolocation='37.5499689,127.0234623',
                     contact_number='0200000000',
                     description='Dummy Restaurant description',
