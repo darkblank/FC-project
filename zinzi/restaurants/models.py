@@ -1,10 +1,13 @@
-from datetime import time, datetime
+import re
+from datetime import time, datetime, timedelta
 
 import dateutil.parser
+import requests
+from django.conf import settings
 from django.db import models
 from django.db.models import Avg
 from django_google_maps import fields as map_fields
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
 CHOICES_RESTAURANT_TYPE = (
@@ -71,6 +74,7 @@ STAR_RATING = (
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
     address = map_fields.AddressField(max_length=200)
+    district = models.CharField(null=False, blank=True, max_length=20)
     geolocation = map_fields.GeoLocationField(max_length=100)
     # fixme 연락처 정규표현식으로 만들기
     contact_number = models.CharField(max_length=11)
@@ -79,6 +83,7 @@ class Restaurant(models.Model):
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = models.ImageField(upload_to='thumbnail')
+    # fixme menu image model 추가
     menu = models.ImageField(upload_to='menu')
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
@@ -87,6 +92,24 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.district:
+            # Google goecoding에 검색할 parameter값 지정
+            params = {
+                'address': self.address,
+                'language': 'ko'
+            }
+            res = requests.get(settings.GOOGLE_MAPS_API_URL, params=params).json()
+            # 반환되는 값에서 구가 들어오는 위치의 값 추출(정상적으로 입력하였을 경우)
+            district = res['results'][0]['address_components'][2]['long_name']
+            # 정규표현식으로 추출하여 '구'로 끝나는지 값을 찾아 re_district에 저장
+            re_district = re.search('\w{2,3}구', district)
+            # None Type일 경우 즉, 정규표현식에서 '구'로 끝나는 값을 찾지 못했을 경우 ValueError를 일으킴
+            if re_district is None:
+                raise ValueError('구 입력이 정상적이지 않습니다.')
+            self.district = re_district.group()
+        return super().save(*args, **kwargs)
 
     # 댓글 작성시 호출됨
     def calculate_goten_star_rate(self):
@@ -129,6 +152,8 @@ class ReservationInfo(models.Model):
         return f'{self.restaurant} - [{self.date}-{self.time}]'
 
     def save(self, *args, **kwargs):
+        if ReservationInfo.objects.filter(restaurant=self.restaurant, time=self.time, date=self.date).count():
+            raise ValueError('This ReservationInfo is already exist')
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
         if self.acceptable_size_of_party is None:
             self.acceptable_size_of_party = self.restaurant.maximum_party
@@ -160,16 +185,35 @@ class ReservationInfo(models.Model):
             parsed_date = None
         except TypeError:
             parsed_date = None
+        try:
+            if date != parsed_date.strftime('%Y-%m-%d'):
+                raise ParseError('date의 형식이 맞지 않습니다.')
+        except AttributeError:
+            raise ParseError('date의 형식이 맞지 않습니다.')
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
-        if not party:
+        if not party and parsed_date is None:
             return None
-        if party.isdigit() and isinstance(parsed_date, datetime):
-            return cls.objects.filter(
-                restaurant=restaurant,
-                acceptable_size_of_party__gte=party,
-                date=date,
-            )
+        # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
+        # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
+        now_date = datetime.now() + timedelta(hours=9)
+        parsed_now_date = dateutil.parser.parse((datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d'))
+        if parsed_date < parsed_now_date:
+            raise ParseError('date가 오늘보다 이전입니다.')
+        if party.isdigit() and parsed_date:
+            if parsed_date.date() == now_date.date():
+                return cls.objects.filter(
+                    restaurant=restaurant,
+                    acceptable_size_of_party__gte=party,
+                    date=parsed_date,
+                    time__hour__gt=now_date.hour,
+                )
+            else:
+                return cls.objects.filter(
+                    restaurant=restaurant,
+                    acceptable_size_of_party__gte=party,
+                    date=parsed_date,
+                )
         return None
 
 

@@ -13,9 +13,11 @@ class Command(BaseCommand):
         restaurant = Restaurant.objects.first()
         for i in range(14):
             for j in range(13):
-                ReservationInfo.objects.create(
-                    restaurant=restaurant,
-                    time=CHOICES_TIME[j][0],
-                    date=datetime.today() + timedelta(days=i)
-                )
+                if not ReservationInfo.objects.filter(restaurant=restaurant, time=CHOICES_TIME[j][0],
+                                                      date=datetime.today() + timedelta(days=i)).count():
+                    ReservationInfo.objects.create(
+                        restaurant=restaurant,
+                        time=CHOICES_TIME[j][0],
+                        date=datetime.today() + timedelta(days=i)
+                    )
         print("Successfully create dummy info")
