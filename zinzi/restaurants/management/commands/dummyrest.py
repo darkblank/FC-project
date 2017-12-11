@@ -16,11 +16,12 @@ for i in range(1, 6):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        if Restaurant.objects.all().count() < 11:
+        if Restaurant.objects.all().count() < 30:
             for i in range(11):
                 Restaurant.objects.create(
                     name='Dummy Restaurant' + str(i),
                     address='패스트캠퍼스',
+                    district='강남구',
                     geolocation='37.5499689,127.0234623',
                     contact_number='0200000000',
                     description='Dummy Restaurant description',
