@@ -70,9 +70,12 @@ class Signin(APIView):
 class Signout(APIView):
     queryset = User.objects.all()
 
-    def get(self, request):
+    def post(self, request):
         request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        data = {
+            'message': 'Successfully logged out.'
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class ProfileUpdate(generics.RetrieveUpdateAPIView):
