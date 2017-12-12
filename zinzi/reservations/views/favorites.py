@@ -1,12 +1,13 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
+from accounts.models import Profile
 from accounts.serializers import UserSerializer
+from reservations.serializers.favorites import FavoriteSerializer
 from restaurants.models import Restaurant
 from restaurants.serializers import RestaurantListSerializer
 
 
-# 즐겨찾기
 class RestaurantFavoriteToggle(generics.GenericAPIView):
     queryset = Restaurant.objects.all()
 
@@ -25,3 +26,11 @@ class RestaurantFavoriteToggle(generics.GenericAPIView):
             'result': favorite_status,
         }
         return Response(data)
+
+
+class CustomerFavoriteListView(generics.ListAPIView):
+    serializer_class = FavoriteSerializer
+
+    def get_queryset(self):
+        queryset = Profile.objects.filter(user=self.request.user)
+        return queryset
