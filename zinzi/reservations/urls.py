@@ -1,8 +1,10 @@
 from django.conf.urls import url
 
-from reservations.views import PaymentCreateView, test, \
-    ReservationCreateView, CustomerReservationListView, CustomerReservationDetailView, RestaurantReservationListView, \
-    RestaurantReservationDetailView, PaymentDetailView, ReservationPatchView, RestaurantFavoriteToggle
+from reservations.views import test
+from reservations.views.favorite import RestaurantFavoriteToggle
+from reservations.views.payments import PaymentCreateView, PaymentDetailView
+from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
+    CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView
 
 urlpatterns = [
     # 예약정보 url
