@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework import permissions
 from rest_framework.response import Response
 
 from accounts.models import Profile
@@ -10,6 +11,7 @@ from restaurants.serializers import RestaurantListSerializer
 
 class RestaurantFavoriteToggle(generics.GenericAPIView):
     queryset = Restaurant.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -30,6 +32,7 @@ class RestaurantFavoriteToggle(generics.GenericAPIView):
 
 class CustomerFavoriteListView(generics.ListAPIView):
     serializer_class = FavoriteSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         queryset = Profile.objects.filter(user=self.request.user)
