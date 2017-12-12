@@ -20,6 +20,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             'name',
             'address',
             'geolocation',
+            'district',
             'restaurant_type',
             'average_price',
             'thumbnail',

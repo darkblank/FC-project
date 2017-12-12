@@ -5,7 +5,7 @@ import dateutil.parser
 import requests
 from django.conf import settings
 from django.db import models
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
@@ -121,16 +121,24 @@ class Restaurant(models.Model):
         self.save()
 
     @classmethod
-    def get_filtered_list(cls, res_type, price):
+    def get_filtered_list(cls, filter_fields):
         queryset = cls.objects.all()
-        if res_type is None and price is None:
-            return queryset
-        elif res_type is None and price:
-            return queryset.filter(average_price=price)
-        elif res_type and price is None:
-            return queryset.filter(restaurant_type=res_type)
-        else:
-            return queryset.filter(restaurant_type=res_type, average_price=price)
+        # View에서 받아온 딕셔너리의 Key를 순회
+        for filter_field in filter_fields.keys():
+            # 딕셔너리를 순회하면서 해당 값의 value가 None객체가 아닐 경우 filter에 추가
+            if filter_fields[filter_field] is not None:
+                queryset = queryset.filter(**{filter_field: filter_fields[filter_field]})
+        # filter된 쿼리셋 반환 필터가 없을경우(Querystring으로 객체를 받아 오지 못한경우) Restaurant.objects.all() 반환
+        return queryset
+
+    @classmethod
+    def get_searched_list(cls, q):
+        # 무엇을 검색가능하도록 할지, type은 어떻게 할지 수정 필요
+        queryset = cls.objects.filter(
+            Q(name__icontains=q) |
+            Q(restaurant_type__icontains=q)
+        )
+        return queryset
 
 
 class ImageForRestaurant(models.Model):
@@ -174,6 +182,7 @@ class ReservationInfo(models.Model):
         raise ValidationError('party가 int 형식이 아닙니다.')
 
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
+    # fixme 리팩토링 필요
     @classmethod
     def check_acceptable_time(cls, res_pk, party, date):
         restaurant = get_object_or_404(Restaurant, pk=res_pk)
