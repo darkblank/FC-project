@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
 from rest_framework import generics
 from rest_framework import mixins
+from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,6 +25,7 @@ class ReservationCreateView(generics.GenericAPIView,
                             ):
     serializer_class = ReservationSerializer
     queryset = ReservationInfo.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
 
     def perform_create(self, serializer):
         information = self.get_object()
@@ -44,6 +46,7 @@ class ReservationPatchView(generics.UpdateAPIView):
 
 class CustomerReservationListView(generics.ListAPIView):
     serializer_class = ReservationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         queryset = Reservation.objects.filter(user=self.request.user)
@@ -52,6 +55,7 @@ class CustomerReservationListView(generics.ListAPIView):
 
 class CustomerReservationDetailView(generics.RetrieveAPIView):
     serializer_class = ReservationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         queryset = Reservation.objects.filter(user=self.request.user)
@@ -92,7 +96,7 @@ class PaymentCreateView(APIView):
             serializer = PaymentSerializer(data=cancel)
         else:
             serializer = PaymentSerializer(data=payment)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save(reservation=reservation)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
