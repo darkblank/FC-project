@@ -20,6 +20,9 @@ class RestaurantListView(generics.ListAPIView):
     # Querystring으로 전달된 type, price에 대해서 filter를 걸어 리턴하도록 설정
     # fixme district 필터를 추가해야함
     def get_queryset(self):
+        q = self.request.query_params.get('q', None)
+        if q:
+            return Restaurant.get_searched_list(q=q)
         # querystring에서 type, price, district를 찾아 딕셔너리 형태로 Key에 대입, 없을경우 None객체를 넣음
         filter_fields = {
             'restaurant_type': self.request.query_params.get('type', None),
