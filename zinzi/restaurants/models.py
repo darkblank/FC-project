@@ -111,6 +111,9 @@ class Restaurant(models.Model):
             self.district = re_district.group()
         return super().save(*args, **kwargs)
 
+    def get_favorites_count(self):
+        return self.favorite_set.count()
+
     # 댓글 작성시 호출됨
     def calculate_goten_star_rate(self):
         queryset = Comment.objects.filter(restaurant=self)
