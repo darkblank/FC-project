@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
-from reservations.models import Payment, Reservation
+from reservations.models import Reservation
 from restaurants.serializers import ReservationInfoSerializer, RestaurantListSerializer
 
 
@@ -12,16 +12,6 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = (
-            '__all__'
-        )
-
-
-class PaymentSerializer(serializers.ModelSerializer):
-    reservation = ReservationSerializer(read_only=True)
-
-    class Meta:
-        model = Payment
         fields = (
             '__all__'
         )

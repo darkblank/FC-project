@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from reservations.models import Reservation, Payment
-from reservations.serializers import PaymentSerializer
+from reservations.serializers.payments import PaymentSerializer
 
 User = get_user_model()
 
