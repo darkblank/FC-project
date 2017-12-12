@@ -9,9 +9,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.serializers import UserSerializer
 from reservations.models import Reservation, Payment
 from reservations.serializers import PaymentSerializer, ReservationSerializer
 from restaurants.models import ReservationInfo, Restaurant
+from restaurants.serializers import RestaurantListSerializer
 
 User = get_user_model()
 
@@ -106,3 +108,24 @@ class PaymentDetailView(generics.RetrieveAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     lookup_field = 'imp_uid'
+
+
+# 즐겨찾기
+class RestaurantFavoriteToggle(generics.GenericAPIView):
+    queryset = Restaurant.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        if user.profile.favorites.filter(pk=instance.pk):
+            user.profile.favorites.remove(instance)
+            favorite_status = False
+        else:
+            user.profile.favorites.add(instance)
+            favorite_status = True
+        data = {
+            'user': UserSerializer(user).data,
+            'Restaurant': RestaurantListSerializer(instance).data,
+            'result': favorite_status,
+        }
+        return Response(data)

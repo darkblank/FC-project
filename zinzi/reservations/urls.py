@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from reservations.views import PaymentCreateView, test, \
     ReservationCreateView, CustomerReservationListView, CustomerReservationDetailView, RestaurantReservationListView, \
-    RestaurantReservationDetailView, PaymentDetailView, ReservationPatchView
+    RestaurantReservationDetailView, PaymentDetailView, ReservationPatchView, RestaurantFavoriteToggle
 
 urlpatterns = [
     # 예약정보 url
@@ -20,6 +20,9 @@ urlpatterns = [
     # 결제정보 url
     url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment'),
     url(r'^(?P<imp_uid>imp_\d+)/payment/$', PaymentDetailView.as_view(), name='payment-detailupdate'),
+
+    # 즐겨찾기
+    url(r'^(?P<pk>\d+)/favorite-toggle/$', RestaurantFavoriteToggle.as_view(), name='favorite-toggle'),
 
     # 결제 테스트용 url
     url(r'^test/$', test)
