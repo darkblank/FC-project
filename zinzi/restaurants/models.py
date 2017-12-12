@@ -121,16 +121,15 @@ class Restaurant(models.Model):
         self.save()
 
     @classmethod
-    def get_filtered_list(cls, res_type, price):
+    def get_filtered_list(cls, filter_fields):
         queryset = cls.objects.all()
-        if res_type is None and price is None:
-            return queryset
-        elif res_type is None and price:
-            return queryset.filter(average_price=price)
-        elif res_type and price is None:
-            return queryset.filter(restaurant_type=res_type)
-        else:
-            return queryset.filter(restaurant_type=res_type, average_price=price)
+        # View에서 받아온 딕셔너리의 Key를 순회
+        for filter_field in filter_fields.keys():
+            # 딕셔너리를 순회하면서 해당 값의 value가 None객체가 아닐 경우 filter에 추가
+            if filter_fields[filter_field] is not None:
+                queryset = queryset.filter(**{filter_field: filter_fields[filter_field]})
+        # filter된 쿼리셋 반환 필터가 없을경우(Querystring으로 객체를 받아 오지 못한경우) Restaurant.objects.all() 반환
+        return queryset
 
 
 class ImageForRestaurant(models.Model):
