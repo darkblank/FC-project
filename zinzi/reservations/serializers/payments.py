@@ -10,5 +10,24 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = (
-            '__all__'
+            'pk',
+            'imp_uid',
+            'merchant_uid',
+            'pay_method',
+            'pg_provider',
+            'pg_tid',
+            'name',
+            'amount',
+            'cancel_amount',
+            'currency',
+            'status',
+            'paid_at',
+            'failed_at',
+            'cancelled_at',
+            'fail_reason',
+            'cancel_reason',
+            'buyer_name',
+            'buyer_email',
+            'buyer_tel',
+            'reservation',
         )
