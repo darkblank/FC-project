@@ -73,6 +73,7 @@ STAR_RATING = (
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=20)
+    strip_name = models.CharField(max_length=20, null=False, blank=True)
     address = map_fields.AddressField(max_length=200)
     district = models.CharField(null=False, blank=True, max_length=20)
     geolocation = map_fields.GeoLocationField(max_length=100)
@@ -109,6 +110,8 @@ class Restaurant(models.Model):
             if re_district is None:
                 raise ValueError('구 입력이 정상적이지 않습니다.')
             self.district = re_district.group()
+        if not self.strip_name:
+            self.strip_name = self.name.replace(' ', '')
         return super().save(*args, **kwargs)
 
     def get_favorites_count(self):
@@ -137,9 +140,10 @@ class Restaurant(models.Model):
     @classmethod
     def get_searched_list(cls, q):
         # 무엇을 검색가능하도록 할지, type은 어떻게 할지 수정 필요
+        q = q.replace(" ", '')
         queryset = cls.objects.filter(
-            Q(name__icontains=q) |
-            Q(restaurant_type__icontains=q)
+            Q(strip_name__icontains=q) |
+            Q(district__icontains=q)
         )
         return queryset
 
@@ -209,7 +213,7 @@ class ReservationInfo(models.Model):
         # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
         # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
         now_date = datetime.now() + timedelta(hours=9)
-        parsed_now_date = dateutil.parser.parse((datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d'))
+        parsed_now_date = dateutil.parser.parse(now_date.strftime('%Y-%m-%d'))
         if parsed_date < parsed_now_date:
             raise ParseError('date가 오늘보다 이전입니다.')
         if party.isdigit() and parsed_date:
