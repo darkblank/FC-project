@@ -11,6 +11,7 @@ class FavoriteRestaurantSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'name',
+            'thumbnail',
         )
 
 
