@@ -4,9 +4,8 @@ from rest_framework.response import Response
 
 from accounts.models import Profile
 from accounts.serializers import UserSerializer
-from reservations.serializers.favorites import FavoriteSerializer
+from reservations.serializers.favorites import FavoriteSerializer, FavoriteRestaurantSerializer
 from restaurants.models import Restaurant
-from restaurants.serializers import RestaurantListSerializer
 
 
 class RestaurantFavoriteToggle(generics.GenericAPIView):
@@ -24,7 +23,7 @@ class RestaurantFavoriteToggle(generics.GenericAPIView):
             favorite_status = True
         data = {
             'user': UserSerializer(user).data,
-            'Restaurant': RestaurantListSerializer(instance).data,
+            'Restaurant': FavoriteRestaurantSerializer(instance).data,
             'result': favorite_status,
         }
         return Response(data)
