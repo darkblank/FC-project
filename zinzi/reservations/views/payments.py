@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from iamport import Iamport
+from rest_framework import exceptions
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,7 +28,10 @@ class PaymentCreateView(APIView):
         else:
             serializer = PaymentSerializer(data=payment)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(reservation=reservation)
+            try:
+                serializer.save(reservation=reservation)
+            except IntegrityError:
+                raise exceptions.ValidationError
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
