@@ -23,45 +23,48 @@ class Signup(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            # 이메일 인증을 할 시 True로 바뀜 (현재 기본값은 True)
-            user = serializer.data
-            current_site = get_current_site(request)
-            mail_subject = '[Zinzi] 이메일 인증'
-            message = render_to_string('activation.html', {
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            to_email = serializer.validated_data['email']
-            email = EmailMessage(
-                mail_subject,
-                message,
-                to=[to_email],
-            )
-            email.send()
+            user = serializer.save()
+            user.is_active = True
+            user.save()
+            Profile.objects.create(user=user)
+            # 이메일 인증 관련 코드
+            # user = serializer.data
+            # current_site = get_current_site(request)
+            # mail_subject = '[Zinzi] 이메일 인증'
+            # message = render_to_string('activation.html', {
+            #     'domain': current_site.domain,
+            #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            #     'token': account_activation_token.make_token(user),
+            # })
+            # to_email = serializer.validated_data['email']
+            # email = EmailMessage(
+            #     mail_subject,
+            #     message,
+            #     to=[to_email],
+            # )
+            # email.send()
             data = {
                 'user': serializer.data,
             }
             return Response(data=data, status=status.HTTP_201_CREATED)
 
 
-class Activation(APIView):
-    def get(self, request, uidb64, token):
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        decode_token = force_text(urlsafe_base64_decode(token))
-        user = User.objects.get(pk=uid)
-
-        if decode_token == request.user.token:
-            user.is_active = True
-            user.save()
-            Profile.objects.create(user=user)
-            data = {
-                'token': token,
-                'user': UserSerializer(user).data
-            }
-            return Response(data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+# class Activation(APIView):
+#     def get(self, request, uidb64, token):
+#         uid = force_text(urlsafe_base64_decode(uidb64))
+#         decode_token = force_text(urlsafe_base64_decode(token))
+#         user = User.objects.get(pk=uid)
+#
+#         if decode_token == request.user.token:
+#             user.is_active = True
+#             user.save()
+#             Profile.objects.create(user=user)
+#             data = {
+#                 'token': token,
+#                 'user': UserSerializer(user).data
+#             }
+#             return Response(data, status=status.HTTP_200_OK)
+#         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Signin(APIView):
