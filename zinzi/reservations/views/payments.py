@@ -8,8 +8,8 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Reservation, Payment, PaymentCancel
-from reservations.serializers.payments import PaymentSerializer, PaymentCancelSerializer
+from reservations.models import Reservation, Payment
+from reservations.serializers.payments import PaymentSerializer, PaymentCancelSerializer, PaymentNumberSerializer
 
 User = get_user_model()
 
@@ -42,13 +42,16 @@ class PaymentDetailView(generics.RetrieveAPIView):
     lookup_field = 'imp_uid'
 
 
-class PaymentCancelView(generics.CreateAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentCancelSerializer
-    lookup_field = 'imp_uid'
+class PaymentCancelCreateDetailView(APIView):
+    def post(self, request, imp_uid):
+        payment = get_object_or_404(Payment, imp_uid=imp_uid)
+        serializer = PaymentCancelSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(payment=payment)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_create(self, serializer):
-        payment = self.get_object()
-        serializer.save(
-            payment=payment,
-        )
+    def get(self, request, imp_uid):
+        payment = get_object_or_404(Payment, imp_uid=imp_uid)
+        data = PaymentCancelSerializer(payment.paymentcancel).data
+        return Response(data)
