@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from reservations.models import Reservation, Payment
-from reservations.serializers.payments import PaymentSerializer, PaymentCancelSerializer, PaymentNumberSerializer
+from reservations.serializers.payments import PaymentSerializer, PaymentCancelSerializer
 
 User = get_user_model()
 
@@ -36,7 +36,7 @@ class PaymentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PaymentDetailView(generics.RetrieveAPIView):
+class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     lookup_field = 'imp_uid'
