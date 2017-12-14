@@ -23,3 +23,8 @@ class IsOwnerOrNotAllow(permissions.BasePermission):
 class IsUserOrNotAllow(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
+
+
+class NotAllowForSpecificData(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return not request.data.get('price') and not request.data.get('party')
