@@ -31,6 +31,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     images = ImageForRestaurantSerializer(read_only=True, many=True)
+    favorites = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -43,6 +44,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             'description',
             'restaurant_type',
             'average_price',
+            'favorites',
             'thumbnail',
             'menu',
             'business_hours',
@@ -51,6 +53,9 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             'owner',
             'images',
         )
+
+    def get_favorites(self, obj):
+        return obj.get_favorites_count()
 
 
 class ReservationInfoSerializer(serializers.ModelSerializer):
