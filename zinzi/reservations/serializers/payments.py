@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from reservations.models import Payment
+from reservations.models import Payment, PaymentCancel
 from reservations.serializers import ReservationSerializer
 
 
@@ -30,4 +30,25 @@ class PaymentSerializer(serializers.ModelSerializer):
             'buyer_email',
             'buyer_tel',
             'reservation',
+        )
+
+
+class PaymentNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = (
+            'imp_uid',
+            'merchant_uid',
+        )
+
+
+class PaymentCancelSerializer(serializers.ModelSerializer):
+    payment = PaymentNumberSerializer(read_only=True)
+
+    class Meta:
+        model = PaymentCancel
+        fields = (
+            'pk',
+            'reason',
+            'payment',
         )
