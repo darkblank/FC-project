@@ -5,6 +5,7 @@ from rest_framework import generics, mixins, permissions
 from reservations.models import Reservation
 from reservations.serializers import ReservationSerializer
 from restaurants.models import ReservationInfo, Restaurant
+from utils.permissions import IsUserOrNotAllow
 
 User = get_user_model()
 
@@ -31,6 +32,7 @@ class ReservationCreateView(generics.GenericAPIView,
 class ReservationPatchView(generics.UpdateAPIView):
     serializer_class = ReservationSerializer
     queryset = Reservation.objects.all()
+    permission_classes = (IsUserOrNotAllow,)
 
 
 class CustomerReservationListView(generics.ListAPIView):
