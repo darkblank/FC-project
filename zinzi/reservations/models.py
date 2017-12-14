@@ -54,7 +54,7 @@ class Payment(models.Model):
     )
 
 
-class ReservationCancel(models.Model):
+class PaymentCancel(models.Model):
     payment = models.OneToOneField(
         Payment,
         on_delete=models.CASCADE,
