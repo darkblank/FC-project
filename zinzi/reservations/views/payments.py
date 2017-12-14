@@ -47,7 +47,10 @@ class PaymentCancelCreateDetailView(APIView):
         payment = get_object_or_404(Payment, imp_uid=imp_uid)
         serializer = PaymentCancelSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(payment=payment)
+            try:
+                serializer.save(payment=payment)
+            except IntegrityError:
+                raise exceptions.ValidationError
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
