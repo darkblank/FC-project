@@ -7,6 +7,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '.elasticbeanstalk.com',
     'zinzi.booki.kr',
+    'api.booki.kr',
 ]
 
 # AWS
