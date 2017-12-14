@@ -52,3 +52,13 @@ class Payment(models.Model):
         Reservation,
         on_delete=models.PROTECT,
     )
+
+
+class ReservationCancel(models.Model):
+    payment = models.OneToOneField(
+        Payment,
+        on_delete=models.CASCADE,
+    )
+    amount = models.IntegerField()
+    tax_free = models.IntegerField()
+    reason = models.CharField(max_length=100)
