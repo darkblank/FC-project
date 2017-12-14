@@ -39,8 +39,6 @@ class CommentUpdateDestroyView(mixins.UpdateModelMixin, mixins.DestroyModelMixin
         permissions.IsAuthenticatedOrReadOnly,
         # 작성자가 아니면 읽기만 가능
         IsAuthorOrReadOnly,
-        # Admin일 경우 사용 가능
-        permissions.IsAdminUser,
     )
 
     def patch(self, request, *args, **kwargs):
