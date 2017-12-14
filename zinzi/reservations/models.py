@@ -59,6 +59,4 @@ class ReservationCancel(models.Model):
         Payment,
         on_delete=models.CASCADE,
     )
-    amount = models.IntegerField()
-    tax_free = models.IntegerField()
-    reason = models.CharField(max_length=100)
+    reason = models.CharField(max_length=50)
