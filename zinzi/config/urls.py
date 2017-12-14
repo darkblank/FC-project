@@ -17,6 +17,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from rest_framework_jwt.views import obtain_jwt_token
 
 from config.views import index
 
@@ -25,6 +26,7 @@ urlpatterns = [
 
     url(r'^$', index, name='index'),
     # url(r'^accounts/', include('allauth.urls', namespace='accounts')),
+    url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
     url(r'^restaurants/', include('restaurants.urls', namespace='restaurants')),
     url(r'^reservations/', include('reservations.urls', namespace='reservations')),
