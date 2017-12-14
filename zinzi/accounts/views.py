@@ -19,7 +19,7 @@ from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, Pr
 User = get_user_model()
 
 
-class Signup(APIView):
+class SignupView(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -49,7 +49,7 @@ class Signup(APIView):
             return Response(data=data, status=status.HTTP_201_CREATED)
 
 
-# class Activation(APIView):
+# class ActivationView(APIView):
 #     def get(self, request, uidb64, token):
 #         uid = force_text(urlsafe_base64_decode(uidb64))
 #         decode_token = force_text(urlsafe_base64_decode(token))
@@ -67,7 +67,7 @@ class Signup(APIView):
 #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class Signin(APIView):
+class SigninView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data['email']
         password = request.data['password']
@@ -92,7 +92,7 @@ class Signin(APIView):
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class Signout(APIView):
+class SignoutView(APIView):
     queryset = User.objects.all()
 
     def post(self, request):
@@ -103,7 +103,7 @@ class Signout(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class ProfileUpdate(generics.RetrieveUpdateAPIView):
+class UpdateProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
     lookup_url_kwarg = 'pk'
@@ -113,7 +113,7 @@ class ProfileUpdate(generics.RetrieveUpdateAPIView):
     )
 
 
-class PreferenceUpdate(generics.RetrieveUpdateAPIView):
+class UpdatePreferenceView(generics.RetrieveUpdateAPIView):
     serializer_class = PreferenceSerializer
     queryset = Profile.objects.all()
     lookup_url_kwarg = 'pk'
@@ -151,5 +151,5 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PasswordReset(APIView):
+class ResetPasswordView(APIView):
     pass
