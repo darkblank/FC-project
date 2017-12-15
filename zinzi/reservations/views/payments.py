@@ -41,16 +41,24 @@ class PaymentListView(generics.ListAPIView):
     serializer_class = PaymentSerializer
 
 
-class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-    lookup_field = 'imp_uid'
+class PaymentDetailUpdateView(APIView):
+    def patch(self, request, imp_uid):
+        payment = get_object_or_404(Payment, imp_uid=imp_uid)
+        iamport = Iamport(imp_key=settings.IMP_KEY,
+                          imp_secret=settings.IMP_SECRET)
+        cancel = iamport.cancel(request.data['reason'], imp_uid=payment.imp_uid)
+        serializer = PaymentSerializer(payment, data=cancel, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            payment.reservation.status = 'cancelled'
+            payment.reservation.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_update(self, serializer):
-        serializer.save()
-        payment = self.get_object()
-        payment.reservation.status = 'cancelled'
-        payment.reservation.save()
+    def get(self, request, imp_uid):
+        payment = get_object_or_404(Payment, imp_uid=imp_uid)
+        serializer = PaymentSerializer(payment)
+        return Response(serializer.data)
 
 
 class PaymentCancelCreateDetailView(APIView):
