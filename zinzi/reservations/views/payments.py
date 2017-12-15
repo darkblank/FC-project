@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.utils.datastructures import MultiValueDictKeyError
 from iamport import Iamport
 from rest_framework import exceptions
 from rest_framework import status, generics
@@ -46,7 +47,12 @@ class PaymentDetailUpdateView(APIView):
         payment = get_object_or_404(Payment, imp_uid=imp_uid)
         iamport = Iamport(imp_key=settings.IMP_KEY,
                           imp_secret=settings.IMP_SECRET)
-        cancel = iamport.cancel(request.data['reason'], imp_uid=payment.imp_uid)
+        try:
+            cancel = iamport.cancel(request.data['reason'], imp_uid=payment.imp_uid)
+        except Iamport.ResponseError:
+            raise exceptions.NotAcceptable('Already cancelled')
+        except MultiValueDictKeyError:
+            raise exceptions.ValidationError
         serializer = PaymentSerializer(payment, data=cancel, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
