@@ -13,6 +13,8 @@ import json
 import os
 
 # Paths
+import raven
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
@@ -66,6 +68,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'django_google_maps',
+    'raven.contrib.django.raven_compat',
     'storages',
 
     'accounts',
@@ -134,6 +137,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+}
+
+# Sentry
+RAVEN_CONFIG = {
+    'dsn': 'https://5ec09007da3840dbbce05c1e51dc2267:2d8ad06c7d2f457c92c52bb6b41268a3@sentry.io/259788',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
 }
 
 # Google Maps
