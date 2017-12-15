@@ -54,6 +54,8 @@ class PaymentCancelCreateDetailView(APIView):
         if serializer.is_valid(raise_exception=True):
             try:
                 serializer.save(payment=payment)
+                payment.reservation.status = 'cancelled'
+                payment.reservation.save()
             except IntegrityError:
                 raise exceptions.ValidationError
             return Response(serializer.data, status=status.HTTP_201_CREATED)
