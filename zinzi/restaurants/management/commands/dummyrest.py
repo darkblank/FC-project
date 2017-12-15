@@ -1,10 +1,7 @@
-import os
 from datetime import datetime, timedelta
 from random import randint
 
 from django.contrib.auth import get_user_model
-from django.contrib.staticfiles.storage import staticfiles_storage as storage
-from django.core.files import File
 from django.core.management import BaseCommand
 
 from restaurants.models import Restaurant, CHOICES_RESTAURANT_TYPE, CHOICES_PRICE, CHOICES_TIME, ReservationInfo, \
@@ -12,8 +9,6 @@ from restaurants.models import Restaurant, CHOICES_RESTAURANT_TYPE, CHOICES_PRIC
 
 User = get_user_model()
 user = User.objects.first()
-
-img = File(open(os.path.join(storage.base_location + '/testimage/test1.png'), 'rb'))
 
 
 class Command(BaseCommand):
