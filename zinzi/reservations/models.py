@@ -22,6 +22,7 @@ class Reservation(models.Model):
     price = models.PositiveIntegerField()
     phone_number = models.CharField(max_length=11, blank=True, null=True)
     email = models.CharField(max_length=30, blank=True, null=True)
+    status = models.CharField(max_length=10, default='paid')
 
 
 class Payment(models.Model):
