@@ -13,7 +13,6 @@ class ManagementRestaurant(generics.RetrieveUpdateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantDetailSerializer
     permission_classes = (
-        permissions.IsAdminUser,
         IsOwnerOrNotAllow,
     )
 
