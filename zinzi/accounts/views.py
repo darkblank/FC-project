@@ -1,9 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -11,7 +6,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.tokens import account_activation_token
 from .models import Profile
 from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, PreferenceSerializer, \
     ChangePasswordSerializer
