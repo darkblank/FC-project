@@ -46,6 +46,12 @@ class PaymentDetailUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = PaymentSerializer
     lookup_field = 'imp_uid'
 
+    def perform_update(self, serializer):
+        serializer.save()
+        payment = self.get_object()
+        payment.reservation.status = 'cancelled'
+        payment.reservation.save()
+
 
 class PaymentCancelCreateDetailView(APIView):
     def post(self, request, imp_uid):
