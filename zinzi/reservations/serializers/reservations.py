@@ -40,6 +40,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             'price',
             'phone_number',
             'email',
+            'status',
             'user',
             'information',
             'restaurant',
