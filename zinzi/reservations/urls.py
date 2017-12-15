@@ -2,7 +2,8 @@ from django.conf.urls import url
 
 from reservations.views import test
 from reservations.views.favorites import RestaurantFavoriteToggle, CustomerFavoriteListView
-from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView
+from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
+    PaymentListView
 from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView
 
@@ -20,9 +21,10 @@ urlpatterns = [
         name='restaurant-reservation-detail'),
 
     # 결제정보 url
-    url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment'),
+    url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment-create'),
+    url(r'^payment/$', PaymentListView.as_view(), name='payment-list'),
     url(r'^(?P<imp_uid>imp_\d+)/payment/$', PaymentDetailUpdateView.as_view(), name='payment-detailupdate'),
-    url(r'^(?P<imp_uid>imp_\d+)/paymentcancel', PaymentCancelCreateDetailView.as_view(), name='paymentcancel-createdetail'),
+    url(r'^(?P<imp_uid>imp_\d+)/paymentcancel/$', PaymentCancelCreateDetailView.as_view(), name='paymentcancel-createdetail'),
 
     # 즐겨찾기
     url(r'^(?P<pk>\d+)/favorite-toggle/$', RestaurantFavoriteToggle.as_view(), name='favorite-toggle'),
