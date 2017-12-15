@@ -87,9 +87,6 @@ class SigninView(APIView):
 
 
 class SignoutView(APIView):
-    authentication_classes = (
-        IsAuthenticatedOrReadOnly,
-    )
     queryset = User.objects.all()
 
     def post(self, request):
