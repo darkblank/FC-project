@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ParseError
 
-from utils.permissions import IsOwnerOrReadOnly
+from utils import permissions as custom_permissions
 from ..models import Restaurant, ReservationInfo
 from ..pagination import RestaurantListPagination
 from ..serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
@@ -38,7 +38,7 @@ class RestaurantDetailView(generics.RetrieveAPIView):
     # 로그인을 하지 않았거나 Owner와 request.user가 같지 않을 경우 ReadOnly만 가능
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly
+        custom_permissions.IsOwnerOrReadOnly
     )
 
 

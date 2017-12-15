@@ -21,7 +21,7 @@ class Command(BaseCommand):
         if Restaurant.objects.all().count() < 100:
             # Create Restaurant
             for i in range(11):
-                restaurant = Restaurant(
+                Restaurant.objects.create(
                     name='Dummy Restaurant' + str(i),
                     address='패스트캠퍼스',
                     district='강남구',
@@ -34,9 +34,6 @@ class Command(BaseCommand):
                     maximum_party=randint(1, 100),
                     owner=user,
                 )
-                restaurant.thumbnail.save('testimage.png', img)
-                restaurant.menu.save('testimage.png', img)
-                restaurant.save()
             first_restaurant = Restaurant.objects.first()
             # Create Comment
             for i in range(1, 7):
@@ -58,10 +55,9 @@ class Command(BaseCommand):
                         )
             # Create ImageForRestaurant
             for i in range(3):
-                imagefor = ImageForRestaurant(
+                ImageForRestaurant.objects.create(
                     restaurant=first_restaurant,
                 )
-                imagefor.image.save('testimage.png', img)
             print("Successfully create dummy restaurants")
         else:
             print("Dummy Restaurant is over than 100")

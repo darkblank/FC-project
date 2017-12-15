@@ -10,6 +10,8 @@ from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
+from utils.custom_imagefiled import CustomImageField
+
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),
     ('chn', 'Chinese'),
@@ -83,13 +85,14 @@ class Restaurant(models.Model):
     description = models.TextField()
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
-    thumbnail = models.ImageField(upload_to='thumbnail')
+    thumbnail = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
     # fixme menu image model 추가
-    menu = models.ImageField(upload_to='menu')
+    menu = CustomImageField(upload_to='menu', blank=True, default_static_image='testimage/test1.png')
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
     owner = models.ForeignKey('accounts.User')
+    test = models.ImageField
 
     def __str__(self):
         return self.name
@@ -149,7 +152,7 @@ class Restaurant(models.Model):
 
 
 class ImageForRestaurant(models.Model):
-    image = models.ImageField(upload_to='restaurant')
+    image = CustomImageField(upload_to='restaurant', blank=True, default_static_image='testimage/test1.png')
     restaurant = models.ForeignKey('Restaurant', related_name='images', on_delete=models.CASCADE)
 
     def __str__(self):
