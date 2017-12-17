@@ -10,6 +10,6 @@
 <body>
 <h3>[Zinzi] 이메일 인증</h3>
 <p>아래 링크를 클릭하여 이메일 인증을 진행해주십시오.</p>
-<a href="http://{{ domain }}{% url 'accounts:activation' uidb64=uid token=token %}">인증하기</a>
+<a href="http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}">인증하기</a>
 </body>
 </html>
