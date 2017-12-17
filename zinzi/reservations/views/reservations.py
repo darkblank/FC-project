@@ -105,8 +105,8 @@ class CustomerReservationByDateView(APIView):
 
 class RestaurantReservationByDateView(APIView):
     def post(self, request, pk):
+        restaurant = get_object_or_404(Restaurant, pk=pk)
         try:
-            restaurant = get_object_or_404(Restaurant, pk=pk)
             start_year = self.request.data['start_year']
             start_month = self.request.data['start_month']
             start_day = self.request.data['start_day']
