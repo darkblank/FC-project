@@ -6,8 +6,9 @@ from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from reservations.models import Reservation
+from reservations.models import Reservation, Payment
 from reservations.serializers import ReservationSerializer
+from reservations.serializers.payments import PaymentSerializer
 from restaurants.models import ReservationInfo, Restaurant
 from utils.permissions import IsUserOrNotAllow, NotAllowForSpecificData
 
@@ -61,12 +62,12 @@ class CustomerReservationDetailView(generics.RetrieveAPIView):
 
 
 class RestaurantReservationListView(generics.ListAPIView):
-    serializer_class = ReservationSerializer
+    serializer_class = PaymentSerializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
         restaurant = get_object_or_404(Restaurant, pk=pk)
-        queryset = Reservation.objects.filter(restaurant=restaurant)
+        queryset = Payment.objects.filter(reservation__restaurant=restaurant)
         return queryset
 
 
