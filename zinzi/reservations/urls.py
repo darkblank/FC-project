@@ -5,7 +5,8 @@ from reservations.views.favorites import RestaurantFavoriteToggle, CustomerFavor
 from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
     PaymentListView
 from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
-    CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView
+    CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
+    RestaurantReservationByDate
 
 urlpatterns = [
     # 예약정보 url
@@ -19,6 +20,8 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/restaurant/(?P<reserve_pk>\d+)/$',
         RestaurantReservationDetailView.as_view(),
         name='restaurant-reservation-detail'),
+
+    url(r'^date/$', RestaurantReservationByDate.as_view(),),
 
     # 결제정보 url
     url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment-create'),
