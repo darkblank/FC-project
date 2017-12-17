@@ -24,7 +24,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment-create'),
     url(r'^payment/$', PaymentListView.as_view(), name='payment-list'),
     url(r'^(?P<imp_uid>imp_\d+)/payment/$', PaymentDetailUpdateView.as_view(), name='payment-detailupdate'),
-    url(r'^(?P<imp_uid>imp_\d+)/paymentcancel/$', PaymentCancelCreateDetailView.as_view(), name='paymentcancel-createdetail'),
+
+    url(r'^(?P<imp_uid>imp_\d+)/paymentcancel/$', PaymentCancelCreateDetailView.as_view(),
+        name='paymentcancel-createdetail'),
 
     # 즐겨찾기
     url(r'^(?P<pk>\d+)/favorite-toggle/$', RestaurantFavoriteToggle.as_view(), name='favorite-toggle'),
