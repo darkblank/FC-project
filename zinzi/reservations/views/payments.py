@@ -22,7 +22,10 @@ class PaymentCreateView(APIView):
         reservation = get_object_or_404(Reservation, pk=pk)
         iamport = Iamport(imp_key=settings.IMP_KEY,
                           imp_secret=settings.IMP_SECRET)
+        # 입력한 imp_uid로부터 결제정보를 가져옴
         payment = iamport.find(imp_uid=request.data.get('imp_uid'))
+        # 주문 해야할 금액과 실제 결제 금액이 일치하는지 검증 후 일치하지 않으면 자동으로 취소
+        # 취소 되었을 경우에는 취소 되어진 결제정보로 데이터베이스에 저장
         if not iamport.is_paid(int(request.data.get('price')), imp_uid=request.data.get('imp_uid')):
             cancel = iamport.cancel(u'가격 불일치', imp_uid=request.data.get('imp_uid'))
             serializer = PaymentSerializer(data=cancel)
@@ -47,6 +50,8 @@ class PaymentDetailUpdateView(APIView):
         payment = get_object_or_404(Payment, imp_uid=imp_uid)
         iamport = Iamport(imp_key=settings.IMP_KEY,
                           imp_secret=settings.IMP_SECRET)
+        # 입력한 취소 사유로 해당 imp_uid의 결제 취소 진행
+        # Iamport.ResponseError > 이미 결제 취소되어진 경우
         try:
             cancel = iamport.cancel(request.data['reason'], imp_uid=payment.imp_uid)
         except Iamport.ResponseError:
@@ -54,6 +59,7 @@ class PaymentDetailUpdateView(APIView):
         except MultiValueDictKeyError:
             raise exceptions.ValidationError
         serializer = PaymentSerializer(payment, data=cancel, partial=True)
+        # 결제 취소가 이루어지면 해당 결제 정보에 연결된 예약 정보의 status 필드를 cancelled로 변경
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             payment.reservation.status = 'cancelled'
@@ -71,6 +77,7 @@ class PaymentCancelCreateDetailView(APIView):
     def post(self, request, imp_uid):
         payment = get_object_or_404(Payment, imp_uid=imp_uid)
         serializer = PaymentCancelSerializer(data=request.data)
+        # 결제 취소 요청 정보를 입력하면 연결된 예약 정보의 status 필드를 request로 변경
         if serializer.is_valid(raise_exception=True):
             try:
                 serializer.save(payment=payment)
