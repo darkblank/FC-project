@@ -72,13 +72,13 @@ class RestaurantReservationListView(generics.ListAPIView):
 
 
 class RestaurantReservationDetailView(generics.RetrieveAPIView):
-    serializer_class = ReservationSerializer
-    lookup_url_kwarg = 'reserve_pk'
+    serializer_class = PaymentSerializer
+    lookup_field = 'imp_uid'
 
     def get_queryset(self):
         pk = self.kwargs['pk']
         restaurant = get_object_or_404(Restaurant, pk=pk)
-        queryset = Reservation.objects.filter(restaurant=restaurant)
+        queryset = Payment.objects.filter(reservation__restaurant=restaurant)
         return queryset
 
 

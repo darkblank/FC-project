@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/customer/$', CustomerReservationDetailView.as_view(), name='customer-reservation-detail'),
 
     url(r'^(?P<pk>\d+)/restaurant/$', RestaurantReservationListView.as_view(), name='restaurant-reservation-list'),
-    url(r'^(?P<pk>\d+)/restaurant/(?P<reserve_pk>\d+)/$',
+    url(r'^(?P<pk>\d+)/restaurant/(?P<imp_uid>imp_\d+)/$',
         RestaurantReservationDetailView.as_view(),
         name='restaurant-reservation-detail'),
 
