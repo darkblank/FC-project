@@ -1,4 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -18,47 +23,48 @@ class SignupView(APIView):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
+            # 이메일 인증 전까진 is_active = False (테스트를 위해 True로 임시 설정)
+            user.is_active = False
+            user.save()
+            # 이메일 인증 메시지 보내기
+            current_site = get_current_site(request)
+            mail_subject = '[Zinzi] 이메일 인증'
+            html_message = render_to_string('user_activate.html', {
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': urlsafe_base64_encode(force_bytes(user.token)),
+            })
+            to_email = serializer.validated_data['email']
+            email = EmailMessage(
+                mail_subject,
+                html_message,
+                to=[to_email],
+            )
+            email.send()
+            data = {
+                'user': serializer.data
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ActivateView(APIView):
+    def get(self, request, uidb64, token):
+        uid = force_text(urlsafe_base64_decode(self.kwargs['uidb64']))
+        decoded = force_text(urlsafe_base64_decode(token))
+
+        user = User.objects.get(pk=uid)
+
+        if decoded == Token.objects.get(user=user).key:
             user.is_active = True
             user.save()
             Profile.objects.create(user=user)
-            # 이메일 인증 관련 코드
-            # user = serializer.data
-            # current_site = get_current_site(request)
-            # mail_subject = '[Zinzi] 이메일 인증'
-            # message = render_to_string('activation.html', {
-            #     'domain': current_site.domain,
-            #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            #     'token': account_activation_token.make_token(user),
-            # })
-            # to_email = serializer.validated_data['email']
-            # email = EmailMessage(
-            #     mail_subject,
-            #     message,
-            #     to=[to_email],
-            # )
-            # email.send()
             data = {
-                'user': serializer.data,
+                'token': token,
+                'user': UserSerializer(user).data
             }
-            return Response(data=data, status=status.HTTP_201_CREATED)
-
-
-# class ActivationView(APIView):
-#     def get(self, request, uidb64, token):
-#         uid = force_text(urlsafe_base64_decode(uidb64))
-#         decode_token = force_text(urlsafe_base64_decode(token))
-#         user = User.objects.get(pk=uid)
-#
-#         if decode_token == request.user.token:
-#             user.is_active = True
-#             user.save()
-#             Profile.objects.create(user=user)
-#             data = {
-#                 'token': token,
-#                 'user': UserSerializer(user).data
-#             }
-#             return Response(data, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class SigninView(APIView):
