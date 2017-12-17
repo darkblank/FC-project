@@ -82,7 +82,7 @@ class RestaurantReservationDetailView(generics.RetrieveAPIView):
         return queryset
 
 
-class CustomerReservationByDateView(APIView):
+class CustomerReservationListByDateView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
@@ -103,7 +103,7 @@ class CustomerReservationByDateView(APIView):
         return Response(serializer.data)
 
 
-class RestaurantReservationByDateView(APIView):
+class RestaurantReservationListByDateView(APIView):
     permission_classes = (IsOwnerOrNotAllow,)
 
     def get_object(self):
