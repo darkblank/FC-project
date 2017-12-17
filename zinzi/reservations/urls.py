@@ -6,7 +6,7 @@ from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateVi
     PaymentListView
 from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
-    RestaurantReservationByDate
+    CustomerReservationByDateView
 
 urlpatterns = [
     # 예약정보 url
@@ -21,7 +21,7 @@ urlpatterns = [
         RestaurantReservationDetailView.as_view(),
         name='restaurant-reservation-detail'),
 
-    url(r'^date/$', RestaurantReservationByDate.as_view(),),
+    url(r'^customer/date/$', CustomerReservationByDateView.as_view(), name='customer-reservation-list-by-date'),
 
     # 결제정보 url
     url(r'^(?P<pk>\d+)/payment/$', PaymentCreateView.as_view(), name='payment-create'),

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.utils.datastructures import MultiValueDictKeyError
+from rest_framework import exceptions
 from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -79,12 +81,22 @@ class RestaurantReservationDetailView(generics.RetrieveAPIView):
         return queryset
 
 
-class RestaurantReservationByDate(APIView):
-    def post(self, request):
-        year = self.request.data['year']
-        month = self.request.data['month']
-        day = self.request.data['day']
-        info = Reservation.objects.filter(information__date=f'{year}-{month}-{day}')
-        serializer = ReservationSerializer(info, many=True)
-        return Response(serializer.data)
+class CustomerReservationByDateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
+    def post(self, request):
+        try:
+            start_year = self.request.data['start_year']
+            start_month = self.request.data['start_month']
+            start_day = self.request.data['start_day']
+            end_year = self.request.data['end_year']
+            end_month = self.request.data['end_month']
+            end_day = self.request.data['end_day']
+        except MultiValueDictKeyError:
+            raise exceptions.ValidationError
+        info = Reservation.objects.filter(
+            information__date__range=[f'{start_year}-{start_month}-{start_day}',
+                                      f'{end_year}-{end_month}-{end_day}'])
+        filtered_info = info.filter(user=request.user)
+        serializer = ReservationSerializer(filtered_info, many=True)
+        return Response(serializer.data)
