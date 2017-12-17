@@ -101,3 +101,22 @@ class CustomerReservationByDateView(APIView):
         filtered_info = info.filter(user=request.user)
         serializer = ReservationSerializer(filtered_info, many=True)
         return Response(serializer.data)
+
+
+class RestaurantReservationByDateView(APIView):
+    def post(self, request, pk):
+        try:
+            restaurant = get_object_or_404(Restaurant, pk=pk)
+            start_year = self.request.data['start_year']
+            start_month = self.request.data['start_month']
+            start_day = self.request.data['start_day']
+            end_year = self.request.data['end_year']
+            end_month = self.request.data['end_month']
+            end_day = self.request.data['end_day']
+        except MultiValueDictKeyError:
+            raise exceptions.ValidationError
+        info = Payment.objects.filter(reservation__information__date__range=[f'{start_year}-{start_month}-{start_day}',
+                                                                             f'{end_year}-{end_month}-{end_day}'])
+        filtered_info = info.filter(reservation__restaurant=restaurant)
+        serializer = PaymentSerializer(filtered_info, many=True)
+        return Response(serializer.data)
