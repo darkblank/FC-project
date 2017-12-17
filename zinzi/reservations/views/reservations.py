@@ -10,7 +10,7 @@ from reservations.models import Reservation, Payment
 from reservations.serializers import ReservationSerializer
 from reservations.serializers.payments import PaymentSerializer
 from restaurants.models import ReservationInfo, Restaurant
-from utils.permissions import IsUserOrNotAllow, NotAllowForSpecificData
+from utils.permissions import IsUserOrNotAllow, NotAllowForSpecificData, IsOwnerOrNotAllow
 
 User = get_user_model()
 
@@ -104,8 +104,15 @@ class CustomerReservationByDateView(APIView):
 
 
 class RestaurantReservationByDateView(APIView):
-    def post(self, request, pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk)
+    permission_classes = (IsOwnerOrNotAllow,)
+
+    def get_object(self):
+        obj = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def post(self, request, *args, **kwargs):
+        restaurant = self.get_object()
         try:
             start_year = self.request.data['start_year']
             start_month = self.request.data['start_month']
