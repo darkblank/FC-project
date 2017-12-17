@@ -1,15 +1,4 @@
-<!doctype html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>이메일 인증</title>
-</head>
-<body>
-<h3>[Zinzi] 이메일 인증</h3>
-<p>아래 링크를 클릭하여 이메일 인증을 진행해주십시오.</p>
-<a href="http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}">인증하기</a>
-</body>
-</html>
+진지한 외식 서비스 'Zinzi'에 가입해주셔서 감사합니다.
+
+아래 링크를 클릭하여 이메일 인증을 진행해주십시오.
+http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}
