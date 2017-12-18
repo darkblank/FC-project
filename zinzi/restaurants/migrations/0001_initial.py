@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django_google_maps.fields
-import utils.custom_imagefiled
+import utils.custom_imagefield
 
 
 class Migration(migrations.Migration):
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
             name='ImageForRestaurant',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', utils.custom_imagefiled.CustomImageField(blank=True, upload_to='restaurant')),
+                ('image', utils.custom_imagefield.CustomImageField(blank=True, upload_to='restaurant')),
             ],
         ),
         migrations.CreateModel(
@@ -64,8 +64,8 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('restaurant_type', models.CharField(choices=[('kor', 'Korean'), ('chn', 'Chinese'), ('jpn', 'Japanese'), ('mex', 'Mexican'), ('amc', 'American'), ('tha', 'Thai'), ('med', 'Mediterranean'), ('ita', 'Italian'), ('vtn', 'Vietnamese'), ('spn', 'Spanish'), ('ind', 'Indian'), ('etc', 'Etc')], max_length=3)),
                 ('average_price', models.CharField(choices=[('c', 'Cheap'), ('n', 'Normal'), ('e', 'Expensive'), ('v', 'Very Expensive')], max_length=1)),
-                ('thumbnail', utils.custom_imagefiled.CustomImageField(blank=True, upload_to='thumbnail')),
-                ('menu', utils.custom_imagefiled.CustomImageField(blank=True, upload_to='menu')),
+                ('thumbnail', utils.custom_imagefield.CustomImageField(blank=True, upload_to='thumbnail')),
+                ('menu', utils.custom_imagefield.CustomImageField(blank=True, upload_to='menu')),
                 ('business_hours', models.CharField(max_length=100)),
                 ('star_rate', models.DecimalField(blank=True, decimal_places=1, default=0, max_digits=2)),
                 ('maximum_party', models.PositiveIntegerField()),

@@ -3,6 +3,8 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from rest_framework.authtoken.models import Token
 
+from utils.custom_imagefield import ProfileImageField
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -94,10 +96,11 @@ class Profile(models.Model):
         choices=CHOICES_USER_TYPE,
         default=USER_TYPE_EMAIL,
     )
-    profile_image = models.ImageField(
+    profile_image = ProfileImageField(
         upload_to='user',
         blank=True,
         null=True,
+        default_static_image='testimage/default-profile.png'
     )
     preferences = models.ManyToManyField(
         'Preference',
