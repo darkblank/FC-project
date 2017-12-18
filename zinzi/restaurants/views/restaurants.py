@@ -52,4 +52,6 @@ class CheckOpenedTimeView(generics.ListAPIView):
         queryset = ReservationInfo.check_acceptable_time(res_pk=res_pk, party=party, date=date)
         if queryset is None:
             raise ParseError('party 또는 date가 정상적으로 입력되지 않았습니다.')
+        if not queryset.count():
+            raise ParseError('예약 가능한 정보가 없습니다.')
         return queryset
