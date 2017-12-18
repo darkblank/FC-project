@@ -10,7 +10,7 @@ from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
-from utils.custom_imagefiled import CustomImageField
+from utils.custom_imagefield import CustomImageField
 
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),

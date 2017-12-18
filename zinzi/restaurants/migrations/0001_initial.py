@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django_google_maps.fields
-import utils.custom_imagefiled
+import utils.custom_imagefield
 
 
 class Migration(migrations.Migration):
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
             name='ImageForRestaurant',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', utils.custom_imagefiled.CustomImageField(blank=True, upload_to='restaurant')),
+                ('image', utils.custom_imagefield.CustomImageField(blank=True, upload_to='restaurant')),
             ],
         ),
         migrations.CreateModel(
