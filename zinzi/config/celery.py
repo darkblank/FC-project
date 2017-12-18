@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault(
     'DJANGO_SETTINGS_MODULE',
-    'config.settings.local'
+    'config.settings.dev'
 )
 
 app = Celery('config')
