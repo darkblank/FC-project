@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
@@ -27,7 +26,7 @@ class PaymentCreateView(APIView):
         payment = iamport.find(imp_uid=request.data.get('imp_uid'))
         # 주문 해야할 금액과 실제 결제 금액이 일치하는지 검증 후 일치하지 않으면 자동으로 취소
         # 취소 되었을 경우에는 취소 되어진 결제정보로 데이터베이스에 저장
-        # 또한, 취소 되었을 경우 취소되었다는 메일 보냄(세팅에 이메일 세팅 추가하고 주석처리 제거)
+        # 또한, 취소 되었을 경우 취소되었다는 메일 보냄(세팅에 이메일 세팅 추가하고 주석처리 제거), celery 이용하도록 변경 필요
         if not iamport.is_paid(int(request.data.get('price')), imp_uid=request.data.get('imp_uid')):
             cancel = iamport.cancel(u'가격 불일치', imp_uid=request.data.get('imp_uid'))
             # send_mail(
