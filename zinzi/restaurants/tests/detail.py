@@ -1,39 +1,17 @@
-from random import randint
-
 from django.contrib.auth import get_user_model
 from django.urls import reverse, resolve
 from rest_framework import status
-from rest_framework.test import APILiveServerTestCase
 
-from restaurants.models import Restaurant, CHOICES_RESTAURANT_TYPE, CHOICES_PRICE
+from restaurants.tests import RestaurantTestBase
 from restaurants.views import RestaurantDetailView
 
 User = get_user_model()
 
 
-class RestaurantDetailViewTest(APILiveServerTestCase):
+class RestaurantDetailViewTest(RestaurantTestBase):
     URL_RESTAURANT_DETAIL_NAME = 'restaurants:restaurant-detail'
     URL_RESTAURANT_DETAIL = '/restaurants/1/'
     VIEW_CLASS = RestaurantDetailView
-
-    @staticmethod
-    def create_user(email='test@test.test', name='dummy'):
-        return User.objects.create_user(email=email, name=name)
-
-    @staticmethod
-    def create_restaurant(user=None):
-        return Restaurant.objects.create(
-            name='Dummy Restaurant',
-            address='패스트캠퍼스',
-            geolocation='37.5499689,127.0234623',
-            contact_number='0200000000',
-            description='Dummy Restaurant description',
-            restaurant_type=CHOICES_RESTAURANT_TYPE[randint(0, len(CHOICES_RESTAURANT_TYPE) - 1)][0],
-            average_price=CHOICES_PRICE[randint(0, len(CHOICES_PRICE) - 1)][0],
-            business_hours='Dummy Business hour',
-            maximum_party=randint(1, 100),
-            owner=user,
-        )
 
     def test_restaurant_detail_url_name_reverse(self):
         url = reverse(self.URL_RESTAURANT_DETAIL_NAME, kwargs={'pk': 1})
