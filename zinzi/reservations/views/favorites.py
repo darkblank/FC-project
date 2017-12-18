@@ -12,6 +12,20 @@ class RestaurantFavoriteToggle(generics.GenericAPIView):
     queryset = Restaurant.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        if user.profile.favorites.filter(pk=instance.pk):
+            favorite_status = True
+        else:
+            favorite_status = False
+        data = {
+            'user': UserSerializer(user).data,
+            'Restaurant': FavoriteRestaurantSerializer(instance).data,
+            'result': favorite_status,
+        }
+        return Response(data)
+
     def post(self, request, *args, **kwargs):
         instance = self.get_object()
         user = request.user
