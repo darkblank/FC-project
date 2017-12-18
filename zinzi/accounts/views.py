@@ -24,7 +24,7 @@ class SignupView(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             # 이메일 인증 전까진 is_active = False (테스트를 위해 True로 임시 설정)
-            user.is_active = False
+            user.is_active = True
             user.save()
             # 이메일 인증 메시지 보내기
             current_site = get_current_site(request)

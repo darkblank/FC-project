@@ -10,7 +10,7 @@ from django_google_maps import fields as map_fields
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
-from utils.custom_imagefiled import CustomImageField
+from utils.custom_imagefield import CustomImageField
 
 CHOICES_RESTAURANT_TYPE = (
     ('kor', 'Korean'),
@@ -94,6 +94,12 @@ class Restaurant(models.Model):
     owner = models.ForeignKey('accounts.User')
     test = models.ImageField
 
+    class Meta:
+        ordering = (
+            '-joined_date',
+            'pk'
+        )
+
     def __str__(self):
         return self.name
 
@@ -114,7 +120,7 @@ class Restaurant(models.Model):
                 raise ValueError('구 입력이 정상적이지 않습니다.')
             self.district = re_district.group()
         if not self.strip_name:
-            self.strip_name = self.name.replace(' ', '')
+            self.strip_name = self.name.replace(' ', '').lower()
         return super().save(*args, **kwargs)
 
     def get_favorites_count(self):
@@ -143,7 +149,7 @@ class Restaurant(models.Model):
     @classmethod
     def get_searched_list(cls, q):
         # 무엇을 검색가능하도록 할지, type은 어떻게 할지 수정 필요
-        q = q.replace(" ", '')
+        q = q.replace(" ", '').lower()
         queryset = cls.objects.filter(
             Q(strip_name__icontains=q) |
             Q(district__icontains=q)
