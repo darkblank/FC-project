@@ -18,7 +18,6 @@ class RestaurantListView(generics.ListAPIView):
     pagination_class = RestaurantListPagination
 
     # Querystring으로 전달된 type, price에 대해서 filter를 걸어 리턴하도록 설정
-    # fixme district 필터를 추가해야함
     def get_queryset(self):
         q = self.request.query_params.get('q', None)
         if q:
