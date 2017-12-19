@@ -225,7 +225,12 @@ class ReservationInfo(models.Model):
         parsed_now_date = dateutil.parser.parse(now_date.strftime('%Y-%m-%d'))
         if parsed_date < parsed_now_date:
             raise ParseError('date가 오늘보다 이전입니다.')
-        if party.isdigit() and parsed_date:
+        try:
+            party.isdigit()
+        except AttributeError:
+            return None
+
+        if party and parsed_date:
             if parsed_date.date() == now_date.date():
                 return cls.objects.filter(
                     restaurant=restaurant,
