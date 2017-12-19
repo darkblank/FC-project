@@ -148,8 +148,8 @@ class ResetPasswordView(APIView):
 
 
 # 회원탈퇴 기능
-class WithrawView(mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
+class WithdrawView(mixins.DestroyModelMixin,
+                   generics.GenericAPIView):
     serializer_class = UserSerializer
     model = User
     permission_classes = (
