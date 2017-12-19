@@ -1,10 +1,9 @@
-from datetime import datetime
 from random import randint
 
 from django.contrib.auth import get_user_model
 from rest_framework.test import APILiveServerTestCase
 
-from restaurants.models import CHOICES_PRICE, CHOICES_RESTAURANT_TYPE, Restaurant, CHOICES_TIME, ReservationInfo
+from restaurants.models import CHOICES_PRICE, CHOICES_RESTAURANT_TYPE, Restaurant
 
 User = get_user_model()
 
@@ -12,10 +11,14 @@ User = get_user_model()
 class RestaurantTestBase(APILiveServerTestCase):
     @staticmethod
     def create_user(email='test@test.test', name='dummy'):
+        if User.objects.count():
+            return User.objects.first()
         return User.objects.create_user(email=email, name=name)
 
     @staticmethod
     def create_restaurant(user=None):
+        if not user:
+            user = RestaurantTestBase.create_user()
         return Restaurant.objects.create(
             name='Dummy Restaurant',
             address='패스트캠퍼스',
@@ -28,14 +31,3 @@ class RestaurantTestBase(APILiveServerTestCase):
             maximum_party=randint(1, 100),
             owner=user,
         )
-
-    def create_info(self):
-        num = randint(0, len(CHOICES_TIME))
-        restaurant = self.create_restaurant()
-        for i in range(num):
-            ReservationInfo.objects.create(
-                restaurant=restaurant,
-                price=CHOICES_TIME[i],
-                date=datetime.now()
-            )
-        return ReservationInfo.objects.all()

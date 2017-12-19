@@ -1,8 +1,8 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
 
+from restaurants.models import Restaurant
+from restaurants.serializers import RestaurantDetailSerializer
 from utils.permissions import IsOwnerOrNotAllow
-from ..models import Restaurant
-from ..serializers import RestaurantDetailSerializer
 
 __all__ = (
     'ManagementRestaurant',
