@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from restaurants.models import Restaurant
 from .models import User, Profile
 
 
@@ -97,6 +98,32 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
     new_password_confirm = serializers.CharField(required=True)
 
-# class ResetPasswordSerializer(serializers.Serializer):
-#     new_password = serializers.CharField(required=True)
-#     new_password_confirm = serializers.CharField(required=True)
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True)
+    new_password_confirm = serializers.CharField(required=True)
+
+
+class BasicInfoRestaurantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restaurant
+        fields = (
+            'pk',
+            'name',
+        )
+
+
+class OwnerProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    # restaurant = BasicInfoRestaurantSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'profile_image',
+            'nickname',
+            'is_owner',
+            'user'
+            # 'restaurant',
+        )

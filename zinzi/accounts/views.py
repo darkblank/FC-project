@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -10,9 +10,11 @@ from rest_framework.compat import authenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from restaurants.models import Restaurant
 from utils.permissions import IsUserOrNotAllow
 from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, ChangePasswordSerializer
+from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, ChangePasswordSerializer, \
+    OwnerProfileSerializer
 
 User = get_user_model()
 
@@ -163,3 +165,13 @@ class WithdrawView(mixins.DestroyModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class OwnerProfileView(generics.RetrieveAPIView):
+    serializer_class = OwnerProfileSerializer
+    queryset = Profile.objects.all()
+    lookup_url_kwarg = 'pk'
+    lookup_field = 'user'
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
