@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -34,11 +34,12 @@ class SignupView(APIView):
                 'token': urlsafe_base64_encode(force_bytes(user.token)),
             })
             to_email = serializer.validated_data['email']
-            email = EmailMessage(
+            email = EmailMultiAlternatives(
                 mail_subject,
                 html_message,
                 to=[to_email],
             )
+            email.attach_alternative(html_message, 'text/html')
             email.send()
             data = {
                 'user': serializer.data
