@@ -4,7 +4,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from rest_framework import status, generics
+from rest_framework import status, generics, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
 from rest_framework.response import Response
@@ -93,6 +93,9 @@ class SigninView(APIView):
 
 class SignoutView(APIView):
     queryset = User.objects.all()
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
 
     def post(self, request):
         request.user.auth_token.delete()
@@ -142,3 +145,20 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 class ResetPasswordView(APIView):
     pass
+
+
+# 회원탈퇴 기능
+class WithrawView(mixins.DestroyModelMixin,
+                  generics.GenericAPIView):
+    serializer_class = UserSerializer
+    model = User
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
+
+    def get_object(self):
+        obj = self.request.user
+        return obj
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
