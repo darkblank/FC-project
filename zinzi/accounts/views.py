@@ -7,13 +7,12 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from utils.permissions import IsUserOrNotAllow
 from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, PreferenceSerializer, \
-    ChangePasswordSerializer
+from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, ChangePasswordSerializer
 
 User = get_user_model()
 
@@ -109,17 +108,7 @@ class UpdateProfileView(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = 'pk'
     lookup_field = 'user'
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
-    )
-
-
-class UpdatePreferenceView(generics.RetrieveUpdateAPIView):
-    serializer_class = PreferenceSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user',
-    permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        IsUserOrNotAllow,
     )
 
 
@@ -127,7 +116,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        IsUserOrNotAllow,
     )
 
     def get_object(self):
