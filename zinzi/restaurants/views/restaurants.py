@@ -36,8 +36,7 @@ class RestaurantDetailView(generics.RetrieveAPIView):
     serializer_class = RestaurantDetailSerializer
     # 로그인을 하지 않았거나 Owner와 request.user가 같지 않을 경우 ReadOnly만 가능
     permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-        custom_permissions.IsOwnerOrReadOnly
+        custom_permissions.ReadOnly,
     )
 
 

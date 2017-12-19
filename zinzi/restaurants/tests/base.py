@@ -11,10 +11,14 @@ User = get_user_model()
 class RestaurantTestBase(APILiveServerTestCase):
     @staticmethod
     def create_user(email='test@test.test', name='dummy'):
+        if User.objects.count():
+            return User.objects.first()
         return User.objects.create_user(email=email, name=name)
 
     @staticmethod
     def create_restaurant(user=None):
+        if not user:
+            user = RestaurantTestBase.create_user()
         return Restaurant.objects.create(
             name='Dummy Restaurant',
             address='패스트캠퍼스',
