@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions, mixins
 from rest_framework.generics import get_object_or_404
 
+from restaurants.models import Comment, Restaurant
+from restaurants.pagination import CommentListPagination
+from restaurants.serializers import CommentSerializer
 from utils.permissions import IsAuthorAndStaffOrReadOnly
-from ..models import Comment, Restaurant
-from ..pagination import CommentListPagination
-from ..serializers import CommentSerializer
 
 __all__ = (
     'CommentListCreateView',

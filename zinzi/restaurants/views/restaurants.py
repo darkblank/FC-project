@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ParseError
 
+from restaurants.models import Restaurant, ReservationInfo
+from restaurants.pagination import RestaurantListPagination
+from restaurants.serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
 from utils import permissions as custom_permissions
-from ..models import Restaurant, ReservationInfo
-from ..pagination import RestaurantListPagination
-from ..serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
 
 __all__ = (
     'RestaurantListView',
