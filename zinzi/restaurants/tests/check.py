@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import randint
 
 from django.urls import reverse, resolve
 from rest_framework import status
@@ -25,8 +26,6 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
                 time=CHOICES_TIME[i][0],
             )
         return ReservationInfo.objects.all()
-
-
 
     def test_restaurant_detail_url_name_reverse(self):
         url = reverse(self.URL_CHECK_OPENED_TIME_NAME, kwargs={'pk': 1})
@@ -111,20 +110,17 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
             self.assertIn('date', cur_data)
 
     def test_check_opened_time_tomorrow(self):
-        tomorrow = datetime.today() + timedelta(days=1)
+        tomorrow = datetime.today() + timedelta(days=randint(1, 5))
         restaurant = self.create_restaurant()
         self.create_info(restaurant=restaurant, date=tomorrow)
         party = str(1)
         date = tomorrow.strftime('%Y-%m-%d')
         url = reverse(self.URL_CHECK_OPENED_TIME_NAME,
-                      kwargs={'pk': restaurant.pk}) + '?party=' + party + '&date=' +date
+                      kwargs={'pk': restaurant.pk}) + '?party=' + party + '&date=' + date
         response = self.client.get(url)
+        # 오늘이 아닐 경우
         self.assertEqual(
             ReservationInfo.objects.filter(acceptable_size_of_party__gte=party,
                                            date=tomorrow.date()).count(),
             len(response.data)
         )
-        
-
-
-
