@@ -92,7 +92,6 @@ class Restaurant(models.Model):
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
     owner = models.ForeignKey('accounts.User')
-    test = models.ImageField
 
     class Meta:
         ordering = (
@@ -163,6 +162,11 @@ class ImageForRestaurant(models.Model):
 
     def __str__(self):
         return f'{self.restaurant} - {self.pk}'
+
+
+class MenuImages(models.Model):
+    image = CustomImageField(upload_to='menu', blank=True, default_static_image='testimage/test1.png')
+    restaurant = models.ForeignKey('Restaurant', related_name='menu_images')
 
 
 class ReservationInfo(models.Model):
