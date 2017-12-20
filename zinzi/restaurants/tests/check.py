@@ -32,9 +32,9 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
         self.assertEqual(url, self.URL_CHECK_OPENED_TIME)
 
     def test_restaurant_detail_url_resolve_view_class(self):
-        resolver_math = resolve(self.URL_CHECK_OPENED_TIME)
-        self.assertEqual(resolver_math.view_name, self.URL_CHECK_OPENED_TIME_NAME)
-        self.assertEqual(resolver_math.func.view_class, self.VIEW_CLASS)
+        resolver_match = resolve(self.URL_CHECK_OPENED_TIME)
+        self.assertEqual(resolver_match.view_name, self.URL_CHECK_OPENED_TIME_NAME)
+        self.assertEqual(resolver_match.func.view_class, self.VIEW_CLASS)
 
     def test_method_check(self):
         restaurant = self.create_restaurant(user=self.create_user())

@@ -21,7 +21,8 @@ class CommentListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         res_pk = self.kwargs['pk']
-        return Comment.objects.filter(restaurant_id=res_pk)
+        restaurant = get_object_or_404(Restaurant, pk=res_pk)
+        return Comment.objects.filter(restaurant=restaurant)
 
     def perform_create(self, serializer):
         # url에서 받은 레스토랑 pk를 이용해 레스토랑 객체를 가져옴

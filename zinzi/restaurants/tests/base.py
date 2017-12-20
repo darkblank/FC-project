@@ -16,6 +16,12 @@ class RestaurantTestBase(APILiveServerTestCase):
         return User.objects.create_user(email=email, name=name)
 
     @staticmethod
+    def create_user2(email='test2@test2.test2', name='dummy2'):
+        if User.objects.count() < 2:
+            return User.objects.create_user(email=email, name=name)
+        return User.objects.last()
+
+    @staticmethod
     def create_restaurant(user=None):
         if not user:
             user = RestaurantTestBase.create_user()

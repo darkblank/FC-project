@@ -22,9 +22,9 @@ class RestaurantDetailViewTest(RestaurantTestBase):
         self.assertEqual(url, self.URL_RESTAURANT_DETAIL)
 
     def test_restaurant_detail_url_resolve_view_class(self):
-        resolver_math = resolve(self.URL_RESTAURANT_DETAIL)
-        self.assertEqual(resolver_math.view_name, self.URL_RESTAURANT_DETAIL_NAME)
-        self.assertEqual(resolver_math.func.view_class, self.VIEW_CLASS)
+        resolver_match = resolve(self.URL_RESTAURANT_DETAIL)
+        self.assertEqual(resolver_match.view_name, self.URL_RESTAURANT_DETAIL_NAME)
+        self.assertEqual(resolver_match.func.view_class, self.VIEW_CLASS)
 
     def test_http_method(self):
         restaurant = self.create_restaurant(user=self.create_user())
@@ -50,7 +50,6 @@ class RestaurantDetailViewTest(RestaurantTestBase):
         restaurant = self.create_restaurant(user=self.create_user())
         url = reverse(self.URL_RESTAURANT_DETAIL_NAME, kwargs={'pk': restaurant.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(restaurant.pk, response.data['pk'])
         self.assertEqual(restaurant.owner_id, response.data['owner']['pk'])
         self.assertEqual(restaurant.favorite_set.count(), response.data['favorites'])
