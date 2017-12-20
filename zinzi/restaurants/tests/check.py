@@ -4,20 +4,20 @@ from random import randint
 from django.urls import reverse, resolve
 from rest_framework import status
 
-from restaurants.models import CHOICES_TIME, ReservationInfo
+from restaurants.models import CHOICES_TIME, ReservationInfo, CONVERT_TO_PRICE
 from restaurants.tests import RestaurantTestBase
 from restaurants.views import CheckOpenedTimeView
 
 
 class CheckOpenedTimeViewTest(RestaurantTestBase):
-    URL_CHECK_OPENED_TIME_NAME = 'restaurants:check-time'
+    URL_CHECK_OPENED_TIME_NAME = 'restaurants:detail:check-time'
     URL_CHECK_OPENED_TIME = '/restaurants/1/check_opened_time/'
     VIEW_CLASS = CheckOpenedTimeView
 
     @staticmethod
     def create_info(restaurant, date=None):
         if not date:
-            date = datetime.today()
+            date = datetime.today() + timedelta(hours=9)
         num = len(CHOICES_TIME)
         for i in range(num):
             ReservationInfo.objects.create(
@@ -39,8 +39,8 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
     def test_method_check(self):
         restaurant = self.create_restaurant(user=self.create_user())
         self.create_info(restaurant=restaurant)
-        url = reverse(self.URL_CHECK_OPENED_TIME_NAME,
-                      kwargs={'pk': restaurant.pk}) + '?party=1&date=' + datetime.today().strftime('%Y-%m-%d')
+        url = reverse(self.URL_CHECK_OPENED_TIME_NAME, kwargs={'pk': restaurant.pk}) + '?party=1&date=' + (
+            datetime.today() + timedelta(hours=9)).strftime('%Y-%m-%d')
         get_response = self.client.get(url)
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         post_response = self.client.post(url)
@@ -90,17 +90,18 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
         restaurant = self.create_restaurant(user=self.create_user())
         self.create_info(restaurant=restaurant)
         party = str(1)
-        date = datetime.today().strftime('%Y-%m-%d')
+        date = (datetime.today() + timedelta(hours=9)).strftime('%Y-%m-%d')
         url = reverse(self.URL_CHECK_OPENED_TIME_NAME,
                       kwargs={'pk': restaurant.pk}) + '?party=' + party + '&date=' + date
         response = self.client.get(url)
         # 오늘 일 경우 데이터가 현재 시간 이후의 것만 나와야 하기때문에 filter한 Info와 response.data의 길이가 같은지 확인
         self.assertEqual(
             ReservationInfo.objects.filter(acceptable_size_of_party__gte=party,
-                                           date=datetime.now().date(),
+                                           date=(datetime.now() + timedelta(hours=9)).date(),
                                            time__hour__gt=(datetime.now() + timedelta(hours=9)).hour).count(),
             len(response.data)
         )
+
         for cur_data in response.data:
             self.assertIn('pk', cur_data)
             self.assertIn('restaurant', cur_data)
@@ -110,17 +111,24 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
             self.assertIn('date', cur_data)
 
     def test_check_opened_time_tomorrow(self):
-        tomorrow = datetime.today() + timedelta(days=randint(1, 5))
+        future_day = datetime.today() + timedelta(days=randint(1, 5))
         restaurant = self.create_restaurant()
-        self.create_info(restaurant=restaurant, date=tomorrow)
+        self.create_info(restaurant=restaurant, date=future_day)
         party = str(1)
-        date = tomorrow.strftime('%Y-%m-%d')
+        date = future_day.strftime('%Y-%m-%d')
         url = reverse(self.URL_CHECK_OPENED_TIME_NAME,
                       kwargs={'pk': restaurant.pk}) + '?party=' + party + '&date=' + date
         response = self.client.get(url)
         # 오늘이 아닐 경우
         self.assertEqual(
             ReservationInfo.objects.filter(acceptable_size_of_party__gte=party,
-                                           date=tomorrow.date()).count(),
+                                           date=future_day.date()).count(),
             len(response.data)
         )
+
+    def test_overridden_save_method(self):
+        restaurant = self.create_restaurant()
+        info_set = self.create_info(restaurant=restaurant, date=datetime.today() + timedelta(hours=9))
+        for info in info_set:
+            self.assertEqual(info.acceptable_size_of_party, restaurant.maximum_party)
+            self.assertEqual(info.price, CONVERT_TO_PRICE[restaurant.average_price])

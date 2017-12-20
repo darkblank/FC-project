@@ -13,7 +13,7 @@ __all__ = (
 
 
 class RestaurantDetailViewTest(RestaurantTestBase):
-    URL_RESTAURANT_DETAIL_NAME = 'restaurants:restaurant-detail'
+    URL_RESTAURANT_DETAIL_NAME = 'restaurants:detail:restaurant-detail'
     URL_RESTAURANT_DETAIL = '/restaurants/1/'
     VIEW_CLASS = RestaurantDetailView
 
