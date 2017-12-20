@@ -9,6 +9,8 @@ __all__ = (
     'ManagementRestaurantView',
     'CreateRestaurantImageView',
     'UpdateDestroyRestaurantImageView',
+    'CreateRestaurantMenuView',
+    'UpdateDestroyRestaurantMenuView',
 )
 
 
