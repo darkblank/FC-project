@@ -8,6 +8,7 @@ class ImageForRestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageForRestaurant
         fields = (
+            'pk',
             'image',
         )
 
@@ -16,6 +17,7 @@ class MenuImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuImages
         fields = (
+            'pk',
             'image',
         )
 
@@ -38,8 +40,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
-    images = ImageForRestaurantSerializer(many=True)
-    menu = MenuImagesSerializer(many=True)
+    images = ImageForRestaurantSerializer(read_only=True, many=True)
+    menu = MenuImagesSerializer(read_only=True, many=True)
     favorites = serializers.SerializerMethodField()
 
     class Meta:

@@ -1,7 +1,8 @@
 from django.conf.urls import url
 
+from restaurants.views.managements import CreateRestaurantMenuView, UpdateDestroyRestaurantMenuView
 from .views import RestaurantListView, RestaurantDetailView, CheckOpenedTimeView, CommentListCreateView, \
-    CommentUpdateDestroyView, ManagementRestaurantView, ManagementRestaurantImageView
+    CommentUpdateDestroyView, ManagementRestaurantView, CreateRestaurantImageView, UpdateDestroyRestaurantImageView
 
 urlpatterns = [
     # Restaurants
@@ -23,7 +24,19 @@ urlpatterns = [
     # Management
 
     # /restaurants/<pk(restaurant pk)>/management/
-    url(r'^(?P<pk>\d+)/management/$', ManagementRestaurantView.as_view(), name='management-restaurant'),
-    # /restaurants/<pk(restaurant pk)>/management/image/
-    url(r'^(?P<pk>\d+)/management/image/$', ManagementRestaurantImageView.as_view(), name='management-restaurant-image')
+    url(r'^management/(?P<pk>\d+)/$', ManagementRestaurantView.as_view(), name='management-restaurant'),
+
+    # Management Restaurant Image
+
+    # /restaurants/management/<pk(restaurant pk)>/image/
+    url(r'^management/(?P<pk>\d+)/image/$', CreateRestaurantImageView.as_view(), name='create-restaurant-image'),
+    # /restaurants/management/image/<pk(image pk)>/
+    url(r'^management/image/(?P<pk>\d+)/$', UpdateDestroyRestaurantImageView.as_view(), name='update-destroy-image'),
+
+    # Management Restaurant Menu Image
+
+    # /restaurants/management/<pk(restaurant pk)>/menu/
+    url(r'^management/(?P<pk>\d+)/menu/$', CreateRestaurantMenuView.as_view(), name='create-restaurant-menu'),
+    # /restauratns/management/menu/<pk(menu pk)>/
+    url(r'^management/menu/(?P<pk>\d+)/$', UpdateDestroyRestaurantMenuView.as_view(), name='update-destroy-menu'),
 ]
