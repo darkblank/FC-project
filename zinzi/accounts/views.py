@@ -1,19 +1,20 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from rest_framework import status, generics
+from rest_framework import status, generics, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from restaurants.models import Restaurant
+from utils.permissions import IsUserOrNotAllow
 from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, PreferenceSerializer, \
-    ChangePasswordSerializer
+from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, ChangePasswordSerializer, \
+    OwnerProfileSerializer
 
 User = get_user_model()
 
@@ -35,11 +36,12 @@ class SignupView(APIView):
                 'token': urlsafe_base64_encode(force_bytes(user.token)),
             })
             to_email = serializer.validated_data['email']
-            email = EmailMessage(
+            email = EmailMultiAlternatives(
                 mail_subject,
                 html_message,
                 to=[to_email],
             )
+            email.attach_alternative(html_message, 'text/html')
             email.send()
             data = {
                 'user': serializer.data
@@ -94,6 +96,9 @@ class SigninView(APIView):
 
 class SignoutView(APIView):
     queryset = User.objects.all()
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
 
     def post(self, request):
         request.user.auth_token.delete()
@@ -109,17 +114,7 @@ class UpdateProfileView(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = 'pk'
     lookup_field = 'user'
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
-    )
-
-
-class UpdatePreferenceView(generics.RetrieveUpdateAPIView):
-    serializer_class = PreferenceSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user',
-    permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        IsUserOrNotAllow,
     )
 
 
@@ -127,7 +122,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        IsUserOrNotAllow,
     )
 
     def get_object(self):
@@ -153,3 +148,30 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 class ResetPasswordView(APIView):
     pass
+
+
+# 회원탈퇴 기능
+class WithdrawView(mixins.DestroyModelMixin,
+                   generics.GenericAPIView):
+    serializer_class = UserSerializer
+    model = User
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
+
+    def get_object(self):
+        obj = self.request.user
+        return obj
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class OwnerProfileView(generics.RetrieveAPIView):
+    serializer_class = OwnerProfileSerializer
+    queryset = Profile.objects.all()
+    lookup_url_kwarg = 'pk'
+    lookup_field = 'user'
+    permission_classes = (
+        IsUserOrNotAllow,
+    )

@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions, mixins
 from rest_framework.generics import get_object_or_404
 
-from utils.permissions import IsAuthorOrReadOnly
-from ..models import Comment, Restaurant
-from ..pagination import CommentListPagination
-from ..serializers import CommentSerializer
+from restaurants.models import Comment, Restaurant
+from restaurants.pagination import CommentListPagination
+from restaurants.serializers import CommentSerializer
+from utils.permissions import IsAuthorAndStaffOrReadOnly
 
 __all__ = (
     'CommentListCreateView',
@@ -38,7 +38,7 @@ class CommentUpdateDestroyView(mixins.UpdateModelMixin, mixins.DestroyModelMixin
         # 로그인하지 않았을 경우 읽기만 가능
         permissions.IsAuthenticatedOrReadOnly,
         # 작성자가 아니면 읽기만 가능
-        IsAuthorOrReadOnly,
+        IsAuthorAndStaffOrReadOnly,
     )
 
     def patch(self, request, *args, **kwargs):

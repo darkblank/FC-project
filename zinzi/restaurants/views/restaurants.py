@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ParseError
 
+from restaurants.models import Restaurant, ReservationInfo
+from restaurants.pagination import RestaurantListPagination
+from restaurants.serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
 from utils import permissions as custom_permissions
-from ..models import Restaurant, ReservationInfo
-from ..pagination import RestaurantListPagination
-from ..serializers import RestaurantListSerializer, RestaurantDetailSerializer, ReservationInfoSerializer
 
 __all__ = (
     'RestaurantListView',
@@ -36,8 +36,7 @@ class RestaurantDetailView(generics.RetrieveAPIView):
     serializer_class = RestaurantDetailSerializer
     # 로그인을 하지 않았거나 Owner와 request.user가 같지 않을 경우 ReadOnly만 가능
     permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-        custom_permissions.IsOwnerOrReadOnly
+        custom_permissions.ReadOnly,
     )
 
 
@@ -52,4 +51,6 @@ class CheckOpenedTimeView(generics.ListAPIView):
         queryset = ReservationInfo.check_acceptable_time(res_pk=res_pk, party=party, date=date)
         if queryset is None:
             raise ParseError('party 또는 date가 정상적으로 입력되지 않았습니다.')
+        if not queryset.count():
+            raise ParseError('예약 가능한 정보가 없습니다.')
         return queryset

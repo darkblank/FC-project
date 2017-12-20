@@ -10,6 +10,10 @@ from restaurants.views import RestaurantListView
 
 User = get_user_model()
 
+__all__ = (
+    'RestaurantListViewTest',
+)
+
 
 class RestaurantListViewTest(RestaurantTestBase):
     URL_RESTAURANT_LIST_NAME = 'restaurants:restaurant-list'
@@ -25,7 +29,7 @@ class RestaurantListViewTest(RestaurantTestBase):
         self.assertEqual(resolver_match.view_name, self.URL_RESTAURANT_LIST_NAME)
         self.assertEqual(resolver_match.func.view_class, self.VIEW_CLASS)
 
-    def http_method_check(self):
+    def test_method_check(self):
         url = reverse(self.URL_RESTAURANT_LIST_NAME)
         get_response = self.client.get(url)
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
