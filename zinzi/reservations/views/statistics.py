@@ -31,6 +31,7 @@ class PaymentRateView(generics.GenericAPIView):
 # 특정 레스토랑에 가장 많이 예약을 한 유저와 예약횟수 반환
 class ReservationMVPView(generics.GenericAPIView):
     queryset = Restaurant.objects.all()
+    permission_classes = (IsOwnerOrNotAllow,)
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
