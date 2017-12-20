@@ -3,10 +3,11 @@ from django.conf.urls import url
 from reservations.views import test
 from reservations.views.favorites import RestaurantFavoriteToggle, CustomerFavoriteListView
 from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
-    PaymentListView, PaymentRateView
+    PaymentListView
 from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
     CustomerReservationListByDateView, RestaurantReservationListByDateView
+from reservations.views.statistics import PaymentRateView
 
 urlpatterns = [
     # 예약정보 url
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^(?P<imp_uid>imp_\d+)/paymentcancel/$', PaymentCancelCreateDetailView.as_view(),
         name='paymentcancel-createdetail'),
 
+    # 통계
     url(r'^(?P<pk>\d+)/rate/$', PaymentRateView.as_view(), name='payment-rate'),
 
     # 즐겨찾기

@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from iamport import Iamport
@@ -12,8 +11,6 @@ from rest_framework.views import APIView
 
 from reservations.models import Reservation, Payment
 from reservations.serializers.payments import PaymentSerializer, PaymentCancelSerializer
-from restaurants.models import Restaurant
-from utils.permissions import IsOwnerOrNotAllow
 
 User = get_user_model()
 
@@ -99,18 +96,3 @@ class PaymentCancelCreateDetailView(APIView):
         return Response(data)
 
 
-class PaymentRateView(generics.GenericAPIView):
-    queryset = Restaurant.objects.all()
-    permission_classes = (IsOwnerOrNotAllow,)
-
-    def get(self, request, *args, **kwargs):
-        instance = self.get_object()
-        paid = Payment.objects.filter(reservation__restaurant=instance)
-        # cancelled_at이 0이 아닌 쿼리셋, 즉 취소되어진 시각이 존재하는 쿼리셋 필터링
-        cancelled = paid.filter(~Q(cancelled_at=0))
-        # round함수로 소수점 둘째자리에서 반올림
-        data = {
-            'payment rate': round(cancelled.count() / paid.count(), 2),
-            'cancelled rate': round(1 - (cancelled.count() / paid.count()), 2),
-        }
-        return Response(data)
