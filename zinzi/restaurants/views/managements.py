@@ -12,7 +12,7 @@ __all__ = (
 )
 
 
-class ManagementRestaurantView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+class ManagementRestaurantView(generics.RetrieveUpdateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantDetailSerializer
     permission_classes = (
@@ -26,7 +26,7 @@ class ManagementRestaurantView(mixins.RetrieveModelMixin, mixins.UpdateModelMixi
         return self.partial_update(request, *args, **kwargs)
 
 
-class CreateRestaurantImageView(mixins.CreateModelMixin, generics.GenericAPIView):
+class CreateRestaurantImageView(generics.CreateAPIView):
     queryset = ImageForRestaurant.objects.all()
     serializer_class = ImageForRestaurantSerializer
     permission_classes = (
@@ -55,7 +55,7 @@ class UpdateDestroyRestaurantImageView(mixins.UpdateModelMixin, mixins.DestroyMo
         return self.destroy(request, *args, **kwargs)
 
 
-class CreateRestaurantMenuView(mixins.CreateModelMixin, generics.GenericAPIView):
+class CreateRestaurantMenuView(generics.CreateAPIView):
     queryset = MenuImages.objects.all()
     serializer_class = MenuImagesSerializer
     permission_classes = (
