@@ -1,12 +1,20 @@
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer, ProfileImageSerializer
-from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment
+from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment, MenuImages
 
 
 class ImageForRestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageForRestaurant
+        fields = (
+            'image',
+        )
+
+
+class MenuImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuImages
         fields = (
             'image',
         )
@@ -30,7 +38,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
-    images = ImageForRestaurantSerializer(read_only=True, many=True)
+    images = ImageForRestaurantSerializer(many=True)
+    menu = MenuImagesSerializer(many=True)
     favorites = serializers.SerializerMethodField()
 
     class Meta:

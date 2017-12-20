@@ -2,7 +2,7 @@ from rest_framework import generics, mixins
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 
-from restaurants.models import Restaurant, ImageForRestaurant
+from restaurants.models import Restaurant, ImageForRestaurant, MenuImages
 from restaurants.serializers import RestaurantDetailSerializer, ImageForRestaurantSerializer
 from utils import permissions as custom_permissions
 
@@ -43,3 +43,7 @@ class ManagementRestaurantImageView(mixins.CreateModelMixin, generics.GenericAPI
     def perform_create(self, serializer):
         restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
         serializer.save(restaurant=restaurant)
+
+
+class ManagementRestaurantMenuView(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = MenuImages.objects.all()

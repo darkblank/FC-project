@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
 
 from restaurants.models import Restaurant, CHOICES_RESTAURANT_TYPE, CHOICES_PRICE, CHOICES_TIME, ReservationInfo, \
-    Comment, STAR_RATING, ImageForRestaurant
+    Comment, STAR_RATING, ImageForRestaurant, MenuImages
 
 User = get_user_model()
 user = User.objects.first()
@@ -51,6 +51,11 @@ class Command(BaseCommand):
             # Create ImageForRestaurant
             for i in range(3):
                 ImageForRestaurant.objects.create(
+                    restaurant=first_restaurant,
+                )
+            # Create MenuImages
+            for i in range(3):
+                MenuImages.objects.create(
                     restaurant=first_restaurant,
                 )
             print("Successfully create dummy restaurants")
