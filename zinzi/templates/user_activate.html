@@ -1,4 +1,4 @@
 <h3>진지한 외식 서비스 'Zinzi'에 가입해주셔서 감사합니다.</h3>
 
 <p>아래 링크를 클릭하여 이메일 인증을 진행해주십시오.</p>
-<a href="{{ protocol }}://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}"><button>이메일 인증</button></a>
+<a href="http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}"><button>이메일 인증</button></a>
