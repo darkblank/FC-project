@@ -7,7 +7,7 @@ from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateVi
 from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
     CustomerReservationListByDateView, RestaurantReservationListByDateView
-from reservations.views.statistics import PaymentRateView
+from reservations.views.statistics import PaymentRateView, ReservationMVPView
 
 urlpatterns = [
     # 예약정보 url
@@ -36,6 +36,7 @@ urlpatterns = [
 
     # 통계
     url(r'^(?P<pk>\d+)/rate/$', PaymentRateView.as_view(), name='payment-rate'),
+    url(r'^(?P<pk>\d+)/mvp/$', ReservationMVPView.as_view(), name='reservation-mvp'),
 
     # 즐겨찾기
     url(r'^(?P<pk>\d+)/favorite-toggle/$', RestaurantFavoriteToggle.as_view(), name='favorite-toggle'),
