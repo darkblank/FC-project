@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views import RestaurantListView, RestaurantDetailView, CheckOpenedTimeView, CommentListCreateView, \
-    CommentUpdateDestroyView, ManagementRestaurant
+    CommentUpdateDestroyView, ManagementRestaurantView
 
 urlpatterns = [
     # Restaurants
@@ -19,6 +19,9 @@ urlpatterns = [
 
     # /restaurants/comments/<pk(comment pk)>/
     url(r'^comments/(?P<pk>\d+)/$', CommentUpdateDestroyView.as_view(), name='comment-update-destroy'),
-    # /restaurants/management/<pk(restaurant pk)>/
-    url(r'^management/(?P<pk>\d+)/$', ManagementRestaurant.as_view(), name='management-restaurant'),
+
+    # Management
+
+    # /restaurants/<pk(restaurant pk)>/management/
+    url(r'^(?P<pk>\d+)/management/$', ManagementRestaurantView.as_view(), name='management-restaurant'),
 ]
