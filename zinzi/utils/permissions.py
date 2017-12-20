@@ -20,6 +20,8 @@ class IsAuthorAndStaffOrReadOnly(permissions.BasePermission):
 
 class IsOwnerOrNotAllow(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
         return obj.owner == request.user
 
 
@@ -31,3 +33,10 @@ class IsUserOrNotAllow(permissions.BasePermission):
 class NotAllowForSpecificData(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return not request.data.get('price') and not request.data.get('party')
+
+
+class IsOwnerForRestaurant(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        return obj.restaurant.owner == request.user
