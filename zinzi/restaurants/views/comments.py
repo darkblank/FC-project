@@ -36,10 +36,10 @@ class CommentUpdateDestroyView(mixins.UpdateModelMixin, mixins.DestroyModelMixin
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (
-        # 로그인하지 않았을 경우 읽기만 가능
-        permissions.IsAuthenticatedOrReadOnly,
         # 작성자가 아니면 읽기만 가능
         IsAuthorAndStaffOrReadOnly,
+        # 로그인하지 않았을 경우 읽기만 가능
+        permissions.IsAuthenticatedOrReadOnly,
     )
 
     def patch(self, request, *args, **kwargs):

@@ -132,3 +132,10 @@ class CheckOpenedTimeViewTest(RestaurantTestBase):
         for info in info_set:
             self.assertEqual(info.acceptable_size_of_party, restaurant.maximum_party)
             self.assertEqual(info.price, CONVERT_TO_PRICE[restaurant.average_price])
+
+    def test_cascade_delete(self):
+        restaurant = self.create_restaurant()
+        info = self.create_info(restaurant=restaurant, date=datetime.today() + timedelta(hours=9))
+        self.assertNotEqual(info.count(), 0)
+        restaurant.delete()
+        self.assertEqual(info.count(), 0)
