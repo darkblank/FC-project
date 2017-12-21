@@ -125,19 +125,28 @@ class CommentListCreateViewTest(RestaurantTestBase):
             wrong_response = self.client.post(url, data=wrong_data)
             self.assertEqual(wrong_response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_cascade_delete(self):
+        restaurant = self.create_restaurant()
+        comment_set = self.create_comment(restaurant=restaurant)
+        self.assertNotEqual(comment_set.count(), 0)
+        restaurant.delete()
+        self.assertEqual(comment_set.count(), 0)
+
 
 class CommentUpdateDestroyViewTest(RestaurantTestBase):
     URL_COMMENT_UPDATE_DELETE_NAME = 'restaurants:comment-update-destroy'
     URL_COMMENT_UPDATE_DELETE = '/restaurants/comments/1/'
     VIEW_CLASS = CommentUpdateDestroyView
 
-    def create_comment(self):
+    def create_comment(self, restaurant=None):
         user = self.create_user()
         if Comment.objects.count() != 0:
             return Comment.objects.first()
+        if restaurant is None:
+            restaurant = self.create_restaurant()
         return Comment.objects.create(
             author=user,
-            restaurant=self.create_restaurant(),
+            restaurant=restaurant,
             star_rate=STAR_RATING[randint(0, len(STAR_RATING) - 1)][0],
             comment='test',
         )
@@ -187,4 +196,18 @@ class CommentUpdateDestroyViewTest(RestaurantTestBase):
         delete_response = self.client.delete(url)
         self.assertEqual(delete_response.status_code, status.HTTP_403_FORBIDDEN)
 
-    
+    def test_comment_update(self):
+        comment = self.create_comment()
+        user = self.create_user()
+        url = reverse(self.URL_COMMENT_UPDATE_DELETE_NAME, kwargs={"pk": comment.pk})
+        self.client.force_authenticate(user=user)
+        self.client.force_login(user=user)
+        patch_response = self.client.patch(url)
+        self.assertIn('pk', patch_response.data)
+        self.assertIn('author', patch_response.data)
+        self.assertIn('restaurant', patch_response.data)
+        self.assertIn('star_rate', patch_response.data)
+        self.assertIn('comment', patch_response.data)
+        self.assertIn('created_at', patch_response.data)
+        self.assertIn('updated_at', patch_response.data)
+
