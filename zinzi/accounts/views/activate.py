@@ -14,9 +14,9 @@ __all__ = (
 )
 
 
-def activate(self, uidb64, token):
-    uid = force_text(urlsafe_base64_decode(self.kwargs['uidb64']))
-    token = force_text(urlsafe_base64_decode(self.kwargs['token']))
+def activate(request, uidb64=None, token=None):
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    token = force_text(urlsafe_base64_decode(token))
 
     user = User.objects.get(pk=uid)
 
@@ -24,9 +24,5 @@ def activate(self, uidb64, token):
         user.is_active = True
         user.save()
         Profile.objects.create(user=user)
-        data = {
-            'token': token,
-            'user': UserSerializer(user).data
-        }
-        return redirect(data, 'http://localhost:8000/accounts/signin/')
+        return redirect('http://localhost:8000/')
     return redirect('http://localhost:8000/accounts/signup/')
