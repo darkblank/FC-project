@@ -1,22 +1,27 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from rest_framework import status, generics, mixins
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from rest_framework import status, mixins, generics
 from rest_framework.authtoken.models import Token
-from rest_framework.compat import authenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from restaurants.models import Restaurant
+from accounts.serializers import SignupSerializer, UserSerializer, ChangePasswordSerializer
 from utils.permissions import IsUserOrNotAllow
-from .models import Profile
-from .serializers import SignupSerializer, UserSerializer, ProfileSerializer, ChangePasswordSerializer, \
-    OwnerProfileSerializer
 
 User = get_user_model()
+
+__all__ = (
+    'SignupView',
+    'SigninView',
+    'SignoutView',
+    'ChangePasswordView',
+    'ResetPasswordView',
+    'WithdrawView',
+)
 
 
 class SignupView(APIView):
@@ -48,25 +53,6 @@ class SignupView(APIView):
             }
             return Response(data=data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ActivateView(APIView):
-    def get(self, request, uidb64, token):
-        uid = force_text(urlsafe_base64_decode(self.kwargs['uidb64']))
-        decoded = force_text(urlsafe_base64_decode(token))
-
-        user = User.objects.get(pk=uid)
-
-        if decoded == Token.objects.get(user=user).key:
-            user.is_active = True
-            user.save()
-            Profile.objects.create(user=user)
-            data = {
-                'token': token,
-                'user': UserSerializer(user).data
-            }
-            return Response(data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class SigninView(APIView):
@@ -106,16 +92,6 @@ class SignoutView(APIView):
             'message': 'Successfully logged out.'
         }
         return Response(data, status=status.HTTP_200_OK)
-
-
-class UpdateProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user'
-    permission_classes = (
-        IsUserOrNotAllow,
-    )
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -165,13 +141,3 @@ class WithdrawView(mixins.DestroyModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-
-
-class OwnerProfileView(generics.RetrieveAPIView):
-    serializer_class = OwnerProfileSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user'
-    permission_classes = (
-        IsUserOrNotAllow,
-    )
