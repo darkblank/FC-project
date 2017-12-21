@@ -1,4 +1,5 @@
 from rest_framework import generics, mixins
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 
 from restaurants.models import Restaurant, ImageForRestaurant, MenuImages
@@ -36,6 +37,9 @@ class CreateRestaurantImageView(generics.CreateAPIView):
     )
 
     def post(self, request, *args, **kwargs):
+        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
+        if request.user != restaurant.owner:
+            raise PermissionDenied
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
@@ -65,6 +69,9 @@ class CreateRestaurantMenuView(generics.CreateAPIView):
     )
 
     def post(self, request, *args, **kwargs):
+        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
+        if request.user != restaurant.owner:
+            raise PermissionDenied
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
