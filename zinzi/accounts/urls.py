@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/owner-profile/$', views.OwnerProfileView.as_view(), name='owner-profile'),
     # url(r'^(?P<pk>\d+)/preference/$', views.PreferenceUpdate.as_view(), name='preference')
     # url(r'(?P<user_pk>\d+)/my-reservation/$' ),
+
+    # Facebook
+    url(r'^facebook-login/$', views.FacebookLoginView.as_view(), name='fb-login')
 ]

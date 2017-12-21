@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
@@ -6,8 +8,10 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import status, mixins, generics
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from typing import NamedTuple
 
 from accounts.serializers import SignupSerializer, UserSerializer, ChangePasswordSerializer
 from utils.permissions import IsUserOrNotAllow
@@ -21,6 +25,7 @@ __all__ = (
     'ChangePasswordView',
     'ResetPasswordView',
     'WithdrawView',
+    'FacebookLoginView',
 )
 
 
@@ -141,3 +146,52 @@ class WithdrawView(mixins.DestroyModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+# 페이스북 로그인
+class FacebookLoginView(APIView):
+    def post(self, request):
+        # Debug결과의 NamedTuple
+        class DebugTokenInfo(NamedTuple):
+            app_id: str
+            application: str
+            expires_at: int
+            is_valid: bool
+            scopes: list
+            type: str
+            user_id: str
+
+        # token(access_token)을 받아 해당 토큰을 Debug
+        def get_debug_token_info(token):
+            app_id = settings.FACEBOOK_APP_ID
+            app_secret_code = settings.FACEBOOK_APP_SECRET_CODE
+            app_access_token = f'{app_id}|{app_secret_code}'
+
+            url_debug_token = 'https://graph.facebook.com/debug_token'
+            params_debug_token = {
+                'input_token': token,
+                'access_token': app_access_token,
+            }
+            response = requests.get(url_debug_token, params_debug_token)
+            return DebugTokenInfo(**response.json()['data'])
+
+        # request.data로 전달된 access_token값을 페이스북API쪽에 debug요청, 결과를 받아옴
+        debug_token_info = get_debug_token_info(request.data['access_token'])
+
+        if debug_token_info.user_id != request.data['facebook_user_id']:
+            raise APIException('페이스북 토큰의 사용자와 전달받은 facebook_user_id가 일치하지 않음')
+
+        if not debug_token_info.is_valid:
+            raise APIException('페이스북 토큰이 유효하지 않음')
+
+        user = authenticate(facebook_user_id=request.data['facebook_user_id'])
+        if not user:
+            user = User.objects.create_user(
+                username=f'fb_{request.data["facebook_user_id"]}',
+                user_type=User.USER_TYPE_FACEBOOK,
+            )
+        data = {
+            'user': UserSerializer(user).data,
+            'token': user.token,
+        }
+        return Response(data)

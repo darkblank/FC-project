@@ -50,6 +50,10 @@ EMAIL_HOST_PASSWORD = config_secret_common['email']['password']
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Facebook
+FACEBOOK_APP_ID = config_secret_common['facebook']['facebook_app_id']
+FACEBOOK_APP_SECRET_CODE = config_secret_common['facebook']['facebook_secret_code']
+
 # Iamport
 IMP_KEY = config_secret_common['iamport']['imp_key']
 IMP_SECRET = config_secret_common['iamport']['imp_secret']
