@@ -5,7 +5,6 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework.authtoken.models import Token
 
 from accounts.models import Profile
-from accounts.serializers import UserSerializer
 
 User = get_user_model()
 
