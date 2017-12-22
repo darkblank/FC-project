@@ -86,7 +86,6 @@ class Restaurant(models.Model):
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
     thumbnail = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
-    # fixme menu image model 추가
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
