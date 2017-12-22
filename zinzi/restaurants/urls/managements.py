@@ -4,7 +4,7 @@ from ..views import ManagementRestaurantView, CreateRestaurantImageView, UpdateD
     CreateRestaurantMenuView, UpdateDestroyRestaurantMenuView
 
 urlpatterns = [
-    # /restaurants/<pk(restaurant pk)>/management/
+    # /restaurants/management/<pk(restaurant pk)>/
     url(r'^(?P<pk>\d+)/$', ManagementRestaurantView.as_view(), name='management-restaurant'),
 
     # Management Restaurant Image

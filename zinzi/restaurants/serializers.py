@@ -84,7 +84,6 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = ProfileImageSerializer(read_only=True)
-    # fixme 레스토랑을 입력받지 않고 저장을 할때 더 좋은 방법이 있는지 확인
     restaurant = serializers.CharField(required=False)
 
     class Meta:

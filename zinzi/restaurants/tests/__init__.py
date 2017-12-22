@@ -3,3 +3,4 @@ from .detail import *
 from .list import *
 from .check import *
 from .comment import *
+from .management import *
