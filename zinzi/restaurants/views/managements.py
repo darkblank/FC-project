@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class ManagementRestaurantView(generics.RetrieveUpdateAPIView):
+class ManagementRestaurantView(mixins.UpdateModelMixin, mixins.RetrieveModelMixin, generics.GenericAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantDetailSerializer
     permission_classes = (
@@ -29,7 +29,7 @@ class ManagementRestaurantView(generics.RetrieveUpdateAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class CreateRestaurantImageView(generics.CreateAPIView):
+class CreateRestaurantImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = ImageForRestaurant.objects.all()
     serializer_class = ImageForRestaurantSerializer
     permission_classes = (
@@ -37,9 +37,6 @@ class CreateRestaurantImageView(generics.CreateAPIView):
     )
 
     def post(self, request, *args, **kwargs):
-        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
-        if request.user != restaurant.owner:
-            raise PermissionDenied
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
@@ -61,7 +58,7 @@ class UpdateDestroyRestaurantImageView(mixins.UpdateModelMixin, mixins.DestroyMo
         return self.destroy(request, *args, **kwargs)
 
 
-class CreateRestaurantMenuView(generics.CreateAPIView):
+class CreateRestaurantMenuView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = MenuImages.objects.all()
     serializer_class = MenuImagesSerializer
     permission_classes = (
@@ -69,9 +66,6 @@ class CreateRestaurantMenuView(generics.CreateAPIView):
     )
 
     def post(self, request, *args, **kwargs):
-        restaurant = get_object_or_404(Restaurant, pk=self.kwargs['pk'])
-        if request.user != restaurant.owner:
-            raise PermissionDenied
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):

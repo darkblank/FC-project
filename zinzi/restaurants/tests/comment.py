@@ -160,7 +160,7 @@ class CommentUpdateDestroyViewTest(RestaurantTestBase):
         self.assertEqual(resolver_match.view_name, self.URL_COMMENT_UPDATE_DELETE_NAME)
         self.assertEqual(resolver_match.func.view_class, self.VIEW_CLASS)
 
-    def test_http_method_with_have_permission_user(self):
+    def test_http_method_with_permission(self):
         user = self.create_user()
         comment = self.create_comment()
         url = reverse(self.URL_COMMENT_UPDATE_DELETE_NAME, kwargs={'pk': comment.pk})
@@ -177,7 +177,7 @@ class CommentUpdateDestroyViewTest(RestaurantTestBase):
         delete_response = self.client.delete(url)
         self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_http_method_with_do_not_have_permission_user(self):
+    def test_http_method_without_permission(self):
         comment = self.create_comment()
         user2 = self.create_user2()
         url = reverse(self.URL_COMMENT_UPDATE_DELETE_NAME, kwargs={'pk': comment.pk})
