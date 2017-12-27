@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer, ProfileImageSerializer
-from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment, MenuImages
+from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment, MenuImages, CONVERT_TO_PRICE
 
 
 class ImageForRestaurantSerializer(serializers.ModelSerializer):
@@ -43,6 +43,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     images = ImageForRestaurantSerializer(read_only=True, many=True)
     menu = MenuImagesSerializer(read_only=True, many=True)
     favorites = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -55,6 +56,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             'description',
             'restaurant_type',
             'average_price',
+            'price',
             'favorites',
             'thumbnail',
             'menu',
@@ -67,6 +69,9 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
     def get_favorites(self, obj):
         return obj.get_favorites_count()
+
+    def get_price(self, obj):
+        return CONVERT_TO_PRICE[obj.average_price]
 
 
 class ReservationInfoSerializer(serializers.ModelSerializer):
