@@ -23,6 +23,8 @@ class MenuImagesSerializer(serializers.ModelSerializer):
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
+    thumbnail = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurant
         fields = (
@@ -37,6 +39,9 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             'star_rate',
         )
 
+    def get_thumbnail(self, obj):
+        return obj.main_image_thumbnail.url
+
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
@@ -44,6 +49,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     menu = MenuImagesSerializer(read_only=True, many=True)
     favorites = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -72,6 +78,9 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
     def get_price(self, obj):
         return CONVERT_TO_PRICE[obj.average_price]
+
+    def get_thumbnail(self, obj):
+        return obj.main_image_thumbnail.url
 
 
 class ReservationInfoSerializer(serializers.ModelSerializer):
