@@ -1,39 +1,41 @@
-from typing import NamedTuple
-
 import requests
 from django.conf import settings
-from django.contrib.auth import get_user_model, authenticate, logout
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import status, mixins, generics
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from typing import NamedTuple
 
-from accounts.forms import SignupForm, SigninForm
-from accounts.serializers import UserSerializer, ChangePasswordSerializer
+from accounts.serializers import SignupSerializer, UserSerializer, ChangePasswordSerializer
 from utils.permissions import IsUserOrNotAllow
 
 User = get_user_model()
 
 __all__ = (
-    'signup',
-    'signin',
-    'signout',
+    'SignupView',
+    'SigninView',
+    'SignoutView',
+    'ChangePasswordView',
+    'ResetPasswordView',
+    'WithdrawView',
+    'FacebookLoginView',
 )
 
 
-def signup(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
+class SignupView(APIView):
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            # 이메일 인증 전까진 is_active = False (테스트를 위해 True로 임시 설정)
+            user.is_active = True
             user.save()
             # 이메일 인증 메시지 보내기
             current_site = get_current_site(request)
@@ -43,7 +45,7 @@ def signup(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': urlsafe_base64_encode(force_bytes(user.token)),
             })
-            to_email = form.cleaned_data['email']
+            to_email = serializer.validated_data['email']
             email = EmailMultiAlternatives(
                 mail_subject,
                 html_message,
@@ -51,29 +53,50 @@ def signup(request):
             )
             email.attach_alternative(html_message, 'text/html')
             email.send()
-            return HttpResponse('이메일 인증을 위해 이메일을 확인해주십시오.')
-    else:
-        form = SignupForm()
-    return render(request, 'accounts/signup.html', {'form': form})
+            data = {
+                'user': serializer.data
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def signin(request):
-    if request.method == 'POST':
-        form = SigninForm(request.POST)
-        if form.is_valid():
-            form.signin(request)
-            return redirect('index')
-    else:
-        form = SigninForm
-    context = {
-        'form': form,
-    }
-    return render(request, 'accounts/signin.html', context)
+class SigninView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = authenticate(
+            email=email,
+            password=password,
+        )
+
+        if user:
+            token, token_created = Token.objects.get_or_create(user=user)
+            data = {
+                'user': UserSerializer(user).data,
+                'token': token.key,
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            data = {
+                'email': email,
+                'password': password,
+            }
+            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
-def signout(request):
-    logout(request)
-    return redirect('index')
+class SignoutView(APIView):
+    queryset = User.objects.all()
+    permission_classes = (
+        IsUserOrNotAllow,
+    )
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        data = {
+            'message': 'Successfully logged out.'
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -102,6 +125,10 @@ class ChangePasswordView(generics.UpdateAPIView):
             self.object.save()
             return Response(status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPasswordView(APIView):
+    pass
 
 
 # 회원탈퇴 기능
