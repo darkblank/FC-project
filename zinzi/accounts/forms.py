@@ -41,6 +41,7 @@ class SignupForm(UserCreationForm):
 
 class SigninForm(forms.ModelForm):
     class Meta:
+        model = User
         fields = (
             'email',
             'password',
