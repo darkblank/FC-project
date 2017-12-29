@@ -2,8 +2,8 @@ from django.conf.urls import url
 
 from reservations.apis import test
 from reservations.apis.favorites import RestaurantFavoriteToggle, CustomerFavoriteListView
-from reservations.apis.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
-    PaymentListView
+from reservations.apis.payments import PaymentCreateView, PaymentListView, PaymentDetailUpdateView, \
+    PaymentCancelCreateDetailView
 from reservations.apis.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
     CustomerReservationListByDateView, RestaurantReservationListByDateView
