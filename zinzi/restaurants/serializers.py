@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer, ProfileImageSerializer
-from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment, MenuImages
+from .models import Restaurant, ImageForRestaurant, ReservationInfo, Comment, MenuImages, CONVERT_TO_PRICE
 
 
 class ImageForRestaurantSerializer(serializers.ModelSerializer):
@@ -23,6 +23,8 @@ class MenuImagesSerializer(serializers.ModelSerializer):
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
+    thumbnail = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurant
         fields = (
@@ -37,12 +39,17 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             'star_rate',
         )
 
+    def get_thumbnail(self, obj):
+        return obj.main_image_thumbnail.url
+
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     images = ImageForRestaurantSerializer(read_only=True, many=True)
     menu = MenuImagesSerializer(read_only=True, many=True)
     favorites = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -55,6 +62,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             'description',
             'restaurant_type',
             'average_price',
+            'price',
             'favorites',
             'thumbnail',
             'menu',
@@ -67,6 +75,12 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
     def get_favorites(self, obj):
         return obj.get_favorites_count()
+
+    def get_price(self, obj):
+        return CONVERT_TO_PRICE[obj.average_price]
+
+    def get_thumbnail(self, obj):
+        return obj.main_image_thumbnail.url
 
 
 class ReservationInfoSerializer(serializers.ModelSerializer):

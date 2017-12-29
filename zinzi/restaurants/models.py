@@ -7,6 +7,8 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Avg, Q
 from django_google_maps import fields as map_fields
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFill
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
@@ -85,7 +87,11 @@ class Restaurant(models.Model):
     description = models.TextField()
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
-    thumbnail = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
+    main_image = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
+    main_image_thumbnail = ImageSpecField(source='main_image',
+                                          processors=[ResizeToFill(440, 200)],
+                                          format='JPEG',
+                                          options={'quality': 60})
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
@@ -178,8 +184,9 @@ class ReservationInfo(models.Model):
         return f'{self.restaurant} - [{self.date}-{self.time}]'
 
     def save(self, *args, **kwargs):
-        if ReservationInfo.objects.filter(restaurant=self.restaurant, time=self.time, date=self.date).count():
-            raise ValueError('This ReservationInfo is already exist')
+        if not self.pk:
+            if ReservationInfo.objects.filter(restaurant=self.restaurant, time=self.time, date=self.date).count():
+                raise ValueError('This ReservationInfo is already exist')
         # acceptable_size_of_party에 값이 없을 경우 자동으로 restaurant.maximum_party에서 값을 받아와서 저장
         if self.acceptable_size_of_party is None:
             self.acceptable_size_of_party = self.restaurant.maximum_party
