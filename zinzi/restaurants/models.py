@@ -6,9 +6,8 @@ import requests
 from django.conf import settings
 from django.db import models
 from django.db.models import Avg, Q
+from django.urls import reverse
 from django_google_maps import fields as map_fields
-from imagekit.models import ImageSpecField
-from pilkit.processors import ResizeToFill
 from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework.generics import get_object_or_404
 
@@ -87,11 +86,7 @@ class Restaurant(models.Model):
     description = models.TextField()
     restaurant_type = models.CharField(max_length=3, choices=CHOICES_RESTAURANT_TYPE)
     average_price = models.CharField(max_length=1, choices=CHOICES_PRICE)
-    main_image = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
-    main_image_thumbnail = ImageSpecField(source='main_image',
-                                          processors=[ResizeToFill(440, 200)],
-                                          format='JPEG',
-                                          options={'quality': 60})
+    thumbnail = CustomImageField(upload_to='thumbnail', blank=True, default_static_image='testimage/test1.png')
     business_hours = models.CharField(max_length=100)
     star_rate = models.DecimalField(null=False, blank=True, default=0, decimal_places=1, max_digits=2)
     maximum_party = models.PositiveIntegerField()
@@ -125,6 +120,9 @@ class Restaurant(models.Model):
         if not self.strip_name:
             self.strip_name = self.name.replace(' ', '').lower()
         return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('restaurants:detail:restaurant-detail', kwargs={'pk': self.pk})
 
     def get_favorites_count(self):
         return self.favorite_set.count()
