@@ -5,7 +5,7 @@ from restaurants.models import Restaurant
 
 
 def reservation_view(request, pk):
-    # method POST로 변경 해야 함(지현님 url 추가 뒤)
+    # 지현님 레스토랑 디테일 뷰에서 예약하기 버튼 누를시 리다이렉트 이쪽으로
     if request.method == 'GET':
         restaurant = Restaurant.objects.get(pk=pk)
         form = ReservationForm()
