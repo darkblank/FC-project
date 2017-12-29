@@ -94,5 +94,3 @@ class PaymentCancelCreateDetailView(APIView):
         payment = get_object_or_404(Payment, imp_uid=imp_uid)
         data = PaymentCancelSerializer(payment.paymentcancel).data
         return Response(data)
-
-

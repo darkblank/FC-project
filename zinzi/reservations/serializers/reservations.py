@@ -12,7 +12,7 @@ class RestaurantCustomSerializer(serializers.ModelSerializer):
             'pk',
             'name',
             'address',
-            'thumbnail',
+            'main_image_thumbnail',
         )
 
 

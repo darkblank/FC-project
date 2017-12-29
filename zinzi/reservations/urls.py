@@ -1,13 +1,13 @@
 from django.conf.urls import url
 
-from reservations.views import test
-from reservations.views.favorites import RestaurantFavoriteToggle, CustomerFavoriteListView
-from reservations.views.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
+from reservations.apis import test
+from reservations.apis.favorites import RestaurantFavoriteToggle, CustomerFavoriteListView
+from reservations.apis.payments import PaymentCreateView, PaymentDetailUpdateView, PaymentCancelCreateDetailView, \
     PaymentListView
-from reservations.views.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
+from reservations.apis.reservations import ReservationCreateView, ReservationPatchView, CustomerReservationListView, \
     CustomerReservationDetailView, RestaurantReservationListView, RestaurantReservationDetailView, \
     CustomerReservationListByDateView, RestaurantReservationListByDateView
-from reservations.views.statistics import PaymentRateView, ReservationMVPView
+from reservations.apis.statistics import PaymentRateView, ReservationMVPView
 
 urlpatterns = [
     # 예약정보 url

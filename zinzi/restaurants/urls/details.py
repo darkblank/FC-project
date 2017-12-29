@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-# from ..views import RestaurantDetailView, CheckOpenedTimeView, CommentListCreateView
+# from ..apis import RestaurantDetailView, CheckOpenedTimeView, CommentListCreateView
 from restaurants.views.restaurants import restaurant_detail_view
 
 urlpatterns = [
