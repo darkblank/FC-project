@@ -32,6 +32,7 @@
     		type: 'POST',
     		dataType: 'json',
     		data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
 	    		imp_uid : rsp.imp_uid,
                 restaurant : '{{ restaurant_pk }}',
                 information : '{{ information_pk }}',
