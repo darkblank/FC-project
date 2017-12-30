@@ -43,9 +43,7 @@ def payment_view(request):
 class PaymentReservationsSaveView(APIView):
     def post(self, request):
         restaurant = request.data.get('restaurant')
-        print(restaurant)
         information = int(request.data.get('information'))
-        print(information)
         name = request.data.get('name')
         party = int(request.data.get('party'))
         phone_number = int(request.data.get('phone_number'))
