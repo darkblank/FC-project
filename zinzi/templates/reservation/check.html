@@ -8,4 +8,8 @@
     party: {{ party }}
     phone_number: {{ phone_number }}
     email: {{ email }}
+    <form action="{% url 'reservations:views:payment' %}" method="post">
+        {% csrf_token %}
+    <input type="submit" value="결제">
+</form>
 {% endblock %}
