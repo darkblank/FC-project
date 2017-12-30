@@ -20,9 +20,10 @@ def reservation_view(request, pk):
         information_pk = request.POST.get('information')
         information = get_object_or_404(ReservationInfo, pk=information_pk)
         name = request.POST.get('name')
-        party = request.POST.get('party')
+        party = int(request.POST.get('party'))
         phone_number = request.POST.get('phone_number')
         email = request.POST.get('email')
+        price = information.price * party
         context = {
             'restaurant': restaurant,
             'information': information,
@@ -30,5 +31,6 @@ def reservation_view(request, pk):
             'party': party,
             'phone_number': phone_number,
             'email': email,
+            'price': price,
         }
         return render(request, 'reservation/check.html', context)

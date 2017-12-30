@@ -8,6 +8,7 @@
     party: {{ party }}
     phone_number: {{ phone_number }}
     email: {{ email }}
+    price: {{ price }}
     <form action="{% url 'reservations:views:payment' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="restaurant" value="{{ restaurant }}">
@@ -16,6 +17,7 @@
         <input type="hidden" name="party" value="{{ party }}">
         <input type="hidden" name="phone_number" value="{{ phone_number }}">
         <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="price" value="{{ price }}">
     <input type="submit" value="결제">
 </form>
 {% endblock %}

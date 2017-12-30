@@ -9,6 +9,7 @@ def payment_view(request):
         party = request.POST.get('party')
         phone_number = request.POST.get('phone_number')
         email = request.POST.get('email')
+        price = request.POST.get('price')
         context = {
             'restaurant': restaurant,
             'information': information,
@@ -16,5 +17,6 @@ def payment_view(request):
             'party': party,
             'phone_number': phone_number,
             'email': email,
+            'price': price,
         }
         return render(request, 'reservation/payment.html', context)
