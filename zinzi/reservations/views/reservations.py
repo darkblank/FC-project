@@ -8,7 +8,7 @@ def reservation_view(request, pk):
     # 지현님 레스토랑 디테일 뷰에서 예약하기 버튼 누를시 리다이렉트 이쪽으로
     if request.method == 'GET':
         restaurant = Restaurant.objects.get(pk=pk)
-        form = ReservationForm()
+        form = ReservationForm(restaurant)
         context = {
             'restaurant': restaurant,
             'form': form,
@@ -31,5 +31,6 @@ def reservation_view(request, pk):
             'phone_number': phone_number,
             'email': email,
             'price': price,
+            'information_pk': information_pk,
         }
         return render(request, 'reservation/check.html', context)

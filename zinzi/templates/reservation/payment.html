@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     restaurant: {{ restaurant }}
-    information: {{ informaion }}
+    information: {{ information }}
     name: {{ name }}
     party: {{ party }}
     price: {{ price }}
@@ -19,7 +19,7 @@
         pay_method: 'phone',
         merchant_uid: 'merchant_' + new Date().getTime(),
         name: 'restaurant:{{ restaurant }},date:{{ information.date }},time:{{ information.time }}',
-        amount: {{ price }},
+        amount: 100,
         buyer_email: '{{ email }}',
         buyer_name: '{{ name }}',
         buyer_tel: '{{ phone_number }}',
@@ -33,13 +33,13 @@
     		dataType: 'json',
     		data: {
 	    		imp_uid : rsp.imp_uid,
-                restaurant: {{ restaurant }},
-                information: {{ informaion }},
-                name: {{ name }},
-                party: {{ party }},
-                price: {{ price }},
-                phone_number: {{ phone_number }},
-                email: {{ email }},
+                restaurant : '{{ restaurant }}',
+                information : '{{ information_pk }}',
+                name : '{{ name }}',
+                party : '{{ party }}',
+                price : 100,
+                phone_number : '{{ phone_number }}',
+                email : '{{ email }}'
 	    		//기타 필요한 데이터가 있으면 추가 전달
     		}
     	}).done(function(data) {
