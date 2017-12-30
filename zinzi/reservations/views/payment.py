@@ -25,6 +25,7 @@ def payment_view(request):
         phone_number = request.POST.get('phone_number')
         email = request.POST.get('email')
         price = request.POST.get('price')
+        restaurant_pk = request.POST.get('restaurant_pk')
         context = {
             'restaurant': restaurant,
             'information': information,
@@ -34,6 +35,7 @@ def payment_view(request):
             'email': email,
             'price': price,
             'information_pk': information_pk,
+            'restaurant_pk': restaurant_pk,
         }
         return render(request, 'reservation/payment.html', context)
     else:
@@ -42,17 +44,18 @@ def payment_view(request):
 
 class PaymentReservationsSaveView(APIView):
     def post(self, request):
-        restaurant = request.data.get('restaurant')
+        restaurant = int(request.data.get('restaurant'))
         information = int(request.data.get('information'))
         name = request.data.get('name')
         party = int(request.data.get('party'))
         phone_number = int(request.data.get('phone_number'))
         email = request.data.get('email')
         price = int(request.data.get('price'))
+        # 유저 리퀘스트 유저로 바꿔줘야
         reservation = Reservation.objects.create(
             user=User.objects.first(),
             information=get_object_or_404(ReservationInfo, pk=information),
-            restaurant=get_object_or_404(Restaurant, name=restaurant),
+            restaurant=get_object_or_404(Restaurant, pk=restaurant),
             name=name,
             party=party,
             phone_number=phone_number,
