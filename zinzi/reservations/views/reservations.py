@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 from reservations.forms import ReservationForm
-from restaurants.models import Restaurant
+from restaurants.models import Restaurant, ReservationInfo
 
 
 def reservation_view(request, pk):
@@ -14,3 +15,20 @@ def reservation_view(request, pk):
             'form': form,
         }
         return render(request, 'reservation/reservation.html', context)
+    else:
+        restaurant = Restaurant.objects.get(pk=pk)
+        information_pk = request.POST.get('information')
+        information = get_object_or_404(ReservationInfo, pk=information_pk)
+        name = request.POST.get('name')
+        party = request.POST.get('party')
+        phone_number = request.POST.get('phone_number')
+        email = request.POST.get('email')
+        context = {
+            'restaurant': restaurant,
+            'information': information,
+            'name': name,
+            'party': party,
+            'phone_number': phone_number,
+            'email': email,
+        }
+        return render(request, 'reservation/check.html', context)
