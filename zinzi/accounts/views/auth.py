@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 import requests
 from django.conf import settings
-from django.contrib.auth import get_user_model, authenticate, logout
+from django.contrib.auth import get_user_model, authenticate, logout, login
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse
@@ -61,8 +61,17 @@ def signin(request):
     if request.method == 'POST':
         form = SigninForm(request.POST)
         if form.is_valid():
-            form.signin(request)
-            return redirect('index')
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(
+                email=email,
+                password=password,
+            )
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else:
+                return HttpResponse('다시 시도해주십시오.')
     else:
         form = SigninForm
     context = {
