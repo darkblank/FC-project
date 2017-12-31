@@ -37,7 +37,7 @@ def payment_view(request):
         }
         return render(request, 'reservation/payment.html', context)
     else:
-        return Http404
+        raise Http404
 
 
 @login_required
