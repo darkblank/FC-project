@@ -7,8 +7,8 @@ from accounts.models import Profile
 User = get_user_model()
 
 
-def profile(request, pk):
-    target_user = Profile.objects.get(pk=pk)
+def profile(request):
+    target_user = Profile.objects.get(user=request.user)
     context = {
         'target_user': target_user,
     }
