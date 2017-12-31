@@ -62,10 +62,11 @@ def payment_reservations_save_view(request):
                           imp_secret=settings.IMP_SECRET)
         # 입력한 imp_uid로부터 결제정보를 가져옴
         payment = iamport.find(imp_uid=request.POST.get('imp_uid'))
+        # Payment 모델에 있는 모든 필드를 리스트에 담음
+        all_fields = [f.name for f in Payment._meta.get_fields()]
         # 주문 해야할 금액과 실제 결제 금액이 일치하는지 검증 후 일치하지 않으면 자동으로 취소
         # 취소 되었을 경우에는 취소 되어진 결제정보로 데이터베이스에 저장
         # 또한, 취소 되었을 경우 취소되었다는 메일 보냄(celery로 비동기 처리, celery config dev로 바꾸고 배포 관련 처리 하고 주석 빼야 함)
-        all_fields = [f.name for f in Payment._meta.get_fields()]
         if not iamport.is_paid(int(request.POST.get('price')), imp_uid=request.POST.get('imp_uid')):
             cancel = iamport.cancel(u'가격 불일치', imp_uid=request.POST.get('imp_uid'))
             # send_mail_task.delay('Test', 'Test', 'darkblank1990@gmail.com')
