@@ -47,9 +47,8 @@ def payment_reservations_save_view(request):
         phone_number = int(request.POST.get('phone_number'))
         email = request.POST.get('email')
         price = int(request.POST.get('price'))
-        # 유저 리퀘스트 유저로 바꿔줘야
         reservation = Reservation.objects.create(
-            user=User.objects.first(),
+            user=request.user,
             information=get_object_or_404(ReservationInfo, pk=information),
             restaurant=get_object_or_404(Restaurant, pk=restaurant),
             name=name,
