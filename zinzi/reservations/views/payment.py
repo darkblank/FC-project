@@ -83,3 +83,12 @@ def payment_reservations_save_view(request):
             )
             return HttpResponse('success')
         return HttpResponse('failed')
+
+
+def payment_complete_view(request):
+    reservation = Reservation.objects.filter(user=request.user)
+    info = reservation.last()
+    context = {
+        'info': info,
+    }
+    return render(request, 'reservation/complete.html', context)

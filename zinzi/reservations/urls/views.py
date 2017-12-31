@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from reservations.views.payment import payment_view, payment_reservations_save_view
+from reservations.views.payment import payment_view, payment_reservations_save_view, payment_complete_view
 from reservations.views.reservations import reservation_view
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
 
     url(r'^payment/$', payment_view, name='payment'),
     url(r'^payment/save/$', payment_reservations_save_view, name='save_all'),
+    url(r'^payment/complete/$', payment_complete_view, name='complete'),
 ]
