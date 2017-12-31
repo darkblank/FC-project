@@ -1,25 +1,19 @@
-from rest_framework import generics
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse
+from django.shortcuts import render
 
 from accounts.models import Profile
-from accounts.serializers import ProfileSerializer, OwnerProfileSerializer
-from utils.permissions import IsUserOrNotAllow
+
+User = get_user_model()
 
 
-class UpdateProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user'
-    permission_classes = (
-        IsUserOrNotAllow,
-    )
+def profile(request, pk):
+    target_user = Profile.objects.get(pk=pk)
+    context = {
+        'target_user': target_user,
+    }
+    return render(request, 'accounts/profile.html', context)
 
 
-class OwnerProfileView(generics.RetrieveAPIView):
-    serializer_class = OwnerProfileSerializer
-    queryset = Profile.objects.all()
-    lookup_url_kwarg = 'pk'
-    lookup_field = 'user'
-    permission_classes = (
-        IsUserOrNotAllow,
-    )
+def update_profile(request, pk):
+    return HttpResponse('폼 만들어야함...')
