@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', reservation_view, name='reservation'),
 
     url(r'^payment/$', payment_view, name='payment'),
-    url(r'^payment/complete/$', payment_reservations_save_view, name='save_all'),
+    url(r'^payment/save/$', payment_reservations_save_view, name='save_all'),
 ]
