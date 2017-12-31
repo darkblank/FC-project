@@ -14,7 +14,7 @@ urlpatterns = [
     # url(r'^withdraw/$', apis.WithdrawView.as_view(), name='widthraw'),
 
     # Profile
-    # url(r'^(?P<pk>\d+)/profile/$', apis.UpdateProfileView.as_view(), name='profile'),
+    url(r'^(?P<pk>\d+)/profile/$', views.profile, name='profile'),
     # url(r'^(?P<pk>\d+)/owner-profile/$', apis.OwnerProfileView.as_view(), name='owner-profile'),
     # url(r'^(?P<pk>\d+)/preference/$', apis.PreferenceUpdate.as_view(), name='preference')
     # url(r'(?P<user_pk>\d+)/my-reservation/$' ),
