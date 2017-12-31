@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
 from restaurants.models import Restaurant, ReservationInfo
 
 
+@login_required
 def reservation_view(request, pk):
     # 지현님 레스토랑 디테일 뷰에서 예약하기 버튼 누를시 리다이렉트 이쪽으로
     if request.method == 'GET':

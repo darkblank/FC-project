@@ -112,6 +112,7 @@ TEMPLATES = [
 ]
 
 # Auth
+LOGIN_URL = 'accounts:signin'
 SUPERUSER_NAME = config_secret_common['django']['superuser']['name']
 SUPERUSER_EMAIL = config_secret_common['django']['superuser']['email']
 SUPERUSER_PASSWORD = config_secret_common['django']['superuser']['password']

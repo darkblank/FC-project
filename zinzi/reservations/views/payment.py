@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -11,6 +12,7 @@ from restaurants.models import ReservationInfo, Restaurant
 User = get_user_model()
 
 
+@login_required
 def payment_view(request):
     if request.method == 'POST':
         restaurant = request.POST.get('restaurant')
@@ -38,6 +40,7 @@ def payment_view(request):
         return Http404
 
 
+@login_required
 def payment_reservations_save_view(request):
     if request.method == 'POST':
         restaurant = int(request.POST.get('restaurant'))
