@@ -85,6 +85,7 @@ def payment_reservations_save_view(request):
         return HttpResponse('failed')
 
 
+@login_required()
 def payment_complete_view(request):
     reservation = Reservation.objects.filter(user=request.user)
     info = reservation.last()
