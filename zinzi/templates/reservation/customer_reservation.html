@@ -3,7 +3,9 @@
 {% block content %}
     {% for reservation in reservations %}
         <div>
-            {{ reservation.information }}
+            <a href="{% url 'reservations:views:customer_reservation_detail' pk=reservation.pk %}">
+                {{ reservation.information }}
+            </a>
         </div>
     {% endfor %}
 {% endblock %}
