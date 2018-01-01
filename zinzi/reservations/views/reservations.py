@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
+from reservations.models import Reservation
 from restaurants.models import Restaurant, ReservationInfo
 
 
@@ -36,3 +37,12 @@ def reservation_view(request, pk):
             'information_pk': information_pk,
         }
         return render(request, 'reservation/check.html', context)
+
+
+@login_required()
+def customer_reservation_check_view(request):
+    reservations = Reservation.objects.filter(user=request.user).order_by('information__date')
+    context = {
+        'reservations': reservations,
+    }
+    return render(request, 'reservation/customer_reservation.html', context)
