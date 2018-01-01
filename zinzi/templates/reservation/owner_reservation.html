@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for reservation in reservations %}
+        <div>
+            <a href="">
+                <div>
+                    {{ reservation.information }}
+                </div>
+                <div>
+                    {{ reservation.name }}
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+{% endblock %}

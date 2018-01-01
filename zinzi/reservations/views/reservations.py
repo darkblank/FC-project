@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
@@ -40,7 +41,6 @@ def reservation_view(request, pk):
 
 
 # 고객 프로필 페이지 쪽에 url 추가(부기형한테)
-# 템플릿에 a태그 추가 해주어야함(디테일 뷰 만들고 나서)
 @login_required()
 def customer_reservation_check_view(request):
     reservations = Reservation.objects.filter(user=request.user).order_by('information__date')
@@ -57,3 +57,17 @@ def customer_reservation_check_detail_view(request, pk):
         'reservation': reservation,
     }
     return render(request, 'reservation/customer_reservation_detail.html', context)
+
+
+@login_required()
+def owner_reservation_check_view(request):
+    # 오우너 프로필 페이지 쪽에 url 추가(부기형)
+    # 현재 로그인 유저가 레스토랑의 owner일 경우에만 접근 가능(owner가 아닐경우 404)
+    if request.user.profile.is_owner:
+        restaurant = get_object_or_404(Restaurant, owner=request.user)
+        reservations = Reservation.objects.filter(restaurant=restaurant)
+        context = {
+            'reservations': reservations,
+        }
+        return render(request, 'reservation/owner_reservation.html', context)
+    raise Http404
