@@ -39,6 +39,8 @@ def reservation_view(request, pk):
         return render(request, 'reservation/check.html', context)
 
 
+# 고객 프로필 페이지 쪽에 url 추가(부기형한테)
+# 템플릿에 a태그 추가 해주어야함(디테일 뷰 만들고 나서)
 @login_required()
 def customer_reservation_check_view(request):
     reservations = Reservation.objects.filter(user=request.user).order_by('information__date')
