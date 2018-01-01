@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
-from reservations.models import Reservation
+from reservations.models import Reservation, Payment
 from restaurants.models import Restaurant, ReservationInfo
 
 
@@ -70,4 +70,17 @@ def owner_reservation_check_view(request):
             'reservations': reservations,
         }
         return render(request, 'reservation/owner_reservation.html', context)
+    raise Http404
+
+
+@login_required()
+def owner_reservation_check_detail_view(request, pk):
+    if request.user.profile.is_owner:
+        reservation = get_object_or_404(Reservation, pk=pk)
+        payment = get_object_or_404(Payment, reservation=reservation)
+        context = {
+            'reservation': reservation,
+            'payment': payment,
+        }
+        return render(request, 'reservation/owner_reservation_detail.html', context)
     raise Http404
