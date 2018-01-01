@@ -48,3 +48,12 @@ def customer_reservation_check_view(request):
         'reservations': reservations,
     }
     return render(request, 'reservation/customer_reservation.html', context)
+
+
+@login_required()
+def customer_reservation_check_detail_view(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+    context = {
+        'reservation': reservation,
+    }
+    return render(request, 'reservation/customer_reservation_detail.html', context)
