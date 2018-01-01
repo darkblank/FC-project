@@ -3,7 +3,7 @@
 {% block content %}
     {% for reservation in reservations %}
         <div>
-            <a href="{% url 'reservations:views:owner_reservation_detail' pk=reservation.pk %}">
+            <a href="{% url 'reservations:views:reservation_check_detail' pk=reservation.pk %}">
                 <div>
                     {{ reservation.information }}
                 </div>

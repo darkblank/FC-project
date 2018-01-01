@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
@@ -40,47 +39,27 @@ def reservation_view(request, pk):
         return render(request, 'reservation/check.html', context)
 
 
-# 고객 프로필 페이지 쪽에 url 추가(부기형한테)
+# 유저 프로필쪽에 추가 요청(부기형한테)
 @login_required()
-def customer_reservation_check_view(request):
-    reservations = Reservation.objects.filter(user=request.user).order_by('information__date')
+def reservation_check_view(request):
+    if request.user.profile.is_owner:
+        restaurant = get_object_or_404(Restaurant, owner=request.user)
+        reservations = Reservation.objects.filter(restaurant=restaurant).order_by('information__date')
+
+    else:
+        reservations = Reservation.objects.filter(user=request.user).order_by('information__date')
     context = {
         'reservations': reservations,
     }
-    return render(request, 'reservation/customer_reservation.html', context)
+    return render(request, 'reservation/reservation_check.html', context)
 
 
 @login_required()
-def customer_reservation_check_detail_view(request, pk):
+def reservation_check_detail_view(request, pk):
     reservation = get_object_or_404(Reservation, pk=pk)
+    payment = get_object_or_404(Payment, reservation=reservation)
     context = {
         'reservation': reservation,
+        'payment': payment,
     }
-    return render(request, 'reservation/customer_reservation_detail.html', context)
-
-
-@login_required()
-def owner_reservation_check_view(request):
-    # 오우너 프로필 페이지 쪽에 url 추가(부기형)
-    # 현재 로그인 유저가 레스토랑의 owner일 경우에만 접근 가능(owner가 아닐경우 404)
-    if request.user.profile.is_owner:
-        restaurant = get_object_or_404(Restaurant, owner=request.user)
-        reservations = Reservation.objects.filter(restaurant=restaurant)
-        context = {
-            'reservations': reservations,
-        }
-        return render(request, 'reservation/owner_reservation.html', context)
-    raise Http404
-
-
-@login_required()
-def owner_reservation_check_detail_view(request, pk):
-    if request.user.profile.is_owner:
-        reservation = get_object_or_404(Reservation, pk=pk)
-        payment = get_object_or_404(Payment, reservation=reservation)
-        context = {
-            'reservation': reservation,
-            'payment': payment,
-        }
-        return render(request, 'reservation/owner_reservation_detail.html', context)
-    raise Http404
+    return render(request, 'reservation/reservation_check_detail.html', context)
