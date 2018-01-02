@@ -1,17 +1,36 @@
 {% load staticfiles %}
+<style>
+    #navbar-container {
+        background-color: #0f0f0f;
+    }
+    .navbar-header > a {
+        color: white;
+    }
+    .navbar-header > a:hover {
+        color: grey;
+    }
+    .navbar-header > a:focus {
+        color: grey;
+    }
+    .navbar-collapse > ul > li > a {
+        text-decoration: none;
+        color: white;
+    }
+    .navbar-collapse > ul > li > a:focus {
+        background-color: black;
+        color: grey;
+    }
+    .navbar-collapse > ul > li > a:hover {
+        background-color: black;
+        color: grey;
+    }
+ </style>
 
 <!-- Static navbar -->
-<nav class="navbar navbar-default navbar-static-top">
+<nav class="navbar navbar-static-top" id="navbar-container">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand navbar-a-tag icon" href="{% url 'index' %}"
+            <a id="index" class="navbar-brand navbar-a-tag icon" href="{% url 'index' %}"
                style="font-size:25px;">Zinzi</a>
             {#            <a class="navbar-brand navbar-a-tag" href="{% url 'home' %}" style="font-size:30px; padding-top:30px;"></a>#}
             <!-- <a class="navbar-brand navbar-a-tag" href="" style="font-size:22px;">Zinzi</a><br/> -->
