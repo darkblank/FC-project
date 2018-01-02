@@ -8,12 +8,15 @@ from accounts.models import Profile
 User = get_user_model()
 
 
+@login_required
 def profile(request):
-    target_user = Profile.objects.get(user=request.user)
-    context = {
-        'target_user': target_user,
-    }
-    return render(request, 'accounts/profile.html', context)
+    if request.user.is_authenticated:
+        target_user = Profile.objects.get(user=request.user)
+        context = {
+            'target_user': target_user,
+        }
+        return render(request, 'accounts/profile.html', context)
+    return redirect('accounts:signin')
 
 
 @login_required

@@ -10,10 +10,17 @@
     <a href="{% url 'accounts:update-profile' %}">
         <button>프로필 수정</button>
     </a>
-    {% if target_user.is_owner == True %}
+    <div>
+        {% if target_user.is_owner == True %}
+            <hr>
+            <div>레스토랑 목록</div>
+        {% endif %}
+    </div>
+    <div>
         <hr>
-        <div>
-            레스토랑 목록
-        </div>
-    {% endif %}
+        <div>예약 확인</div>
+        <a href="{% url 'reservations:views:reservation_check' %}">
+            <button>예약 확인</button>
+        </a>
+    </div>
 {% endblock %}
