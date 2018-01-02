@@ -212,8 +212,54 @@ class ReservationInfo(models.Model):
 
     # CheckOpenedTimeView의 get_queryset에서 호출하여 valid한지 검증 valid하지 않을 경우 None 반환
     # fixme 리팩토링 필요
+    # @classmethod
+    # def check_acceptable_time(cls, res_pk, party, date):
+    #     restaurant = get_object_or_404(Restaurant, pk=res_pk)
+    #     # string으로 온 date값을 python에서 사용하는 datetime type으로 파싱 진행
+    #     # 파싱을 진행하며 잘못된 값이 올 경우 None객체 반환
+    #     try:
+    #         parsed_date = dateutil.parser.parse(date)
+    #     except ValueError:
+    #         parsed_date = None
+    #     except TypeError:
+    #         parsed_date = None
+    #     try:
+    #         if date != parsed_date.strftime('%Y-%m-%d'):
+    #             raise ParseError('date의 형식이 맞지 않습니다.')
+    #     except AttributeError:
+    #         raise ParseError('date의 형식이 맞지 않습니다.')
+    #     # 모든 parameter가 정상적인 경우 필터된 객체를 반환
+    #     # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
+    #     if not party and parsed_date is None:
+    #         return None
+    #     # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
+    #     # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
+    #     now_date = datetime.now() + timedelta(hours=9)
+    #     parsed_now_date = dateutil.parser.parse(now_date.strftime('%Y-%m-%d'))
+    #     if parsed_date < parsed_now_date:
+    #         raise ParseError('date가 오늘보다 이전입니다.')
+    #     try:
+    #         party.isdigit()
+    #     except AttributeError:
+    #         return None
+    #
+    #     if party and parsed_date:
+    #         if parsed_date.date() == now_date.date():
+    #             return cls.objects.filter(
+    #                 restaurant=restaurant,
+    #                 acceptable_size_of_party__gte=party,
+    #                 date=parsed_date,
+    #                 time__hour__gt=now_date.hour,
+    #             )
+    #         else:
+    #             return cls.objects.filter(
+    #                 restaurant=restaurant,
+    #                 acceptable_size_of_party__gte=party,
+    #                 date=parsed_date,
+    #             )
+    #     return None
     @classmethod
-    def check_acceptable_time(cls, res_pk, party, date):
+    def check_acceptable_time(cls, res_pk, date):
         restaurant = get_object_or_404(Restaurant, pk=res_pk)
         # string으로 온 date값을 python에서 사용하는 datetime type으로 파싱 진행
         # 파싱을 진행하며 잘못된 값이 올 경우 None객체 반환
@@ -230,7 +276,7 @@ class ReservationInfo(models.Model):
             raise ParseError('date의 형식이 맞지 않습니다.')
         # 모든 parameter가 정상적인 경우 필터된 객체를 반환
         # party가 숫자가 아닌경우, parsed_date가 datetime type이 아닌 경우 None객체를 반환
-        if not party and parsed_date is None:
+        if parsed_date is None:
             return None
         # 금일보다 적은 날짜인지 비교를 위해 datetime.now(UTC)에서 9시간을 더 한(한국시간)시간을 불러와 원하는 형식인 YYYY-MM-DD형식으로 변경후 datetime 형태로 다시 파싱
         # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
@@ -238,23 +284,17 @@ class ReservationInfo(models.Model):
         parsed_now_date = dateutil.parser.parse(now_date.strftime('%Y-%m-%d'))
         if parsed_date < parsed_now_date:
             raise ParseError('date가 오늘보다 이전입니다.')
-        try:
-            party.isdigit()
-        except AttributeError:
-            return None
 
-        if party and parsed_date:
+        if parsed_date:
             if parsed_date.date() == now_date.date():
                 return cls.objects.filter(
                     restaurant=restaurant,
-                    acceptable_size_of_party__gte=party,
                     date=parsed_date,
                     time__hour__gt=now_date.hour,
                 )
             else:
                 return cls.objects.filter(
                     restaurant=restaurant,
-                    acceptable_size_of_party__gte=party,
                     date=parsed_date,
                 )
         return None
