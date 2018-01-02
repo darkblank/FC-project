@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 from accounts.forms import UpdateProfileForm
 from accounts.models import Profile
@@ -15,16 +16,13 @@ def profile(request):
     return render(request, 'accounts/profile.html', context)
 
 
+@login_required
 def update_profile(request):
     if request.method == 'POST':
-        form = UpdateProfileForm(request.POST, request.FILES)
+        form = UpdateProfileForm(data=request.POST, instance=request.user)
         if form.is_valid():
-            nickname = request.POST['nickname']
-            profile_image = request.FILES['profile_image']
-            Profile.objects.update(
-                nickname=nickname,
-                profile_image=profile_image,
-            )
+            form.save()
+            return redirect('accounts:profile')
     else:
         form = UpdateProfileForm()
     context = {
