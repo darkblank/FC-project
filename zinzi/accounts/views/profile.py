@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 
 from accounts.forms import UpdateProfileForm
 from accounts.models import Profile
+from restaurants.models import Restaurant
 
 User = get_user_model()
 
@@ -12,8 +13,10 @@ User = get_user_model()
 def profile(request):
     if request.user.is_authenticated:
         target_user = Profile.objects.get(user=request.user)
+        restaurants = Restaurant.objects.get(owner=request.user)
         context = {
             'target_user': target_user,
+            'restaurants': restaurants,
         }
         return render(request, 'accounts/profile.html', context)
     return redirect('accounts:signin')
