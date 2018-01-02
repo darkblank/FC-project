@@ -60,6 +60,8 @@ def payment_reservations_save_view(request):
             email=email,
             price=price,
         )
+        # 예약 가능 인원 수에서 예약 인원만큼 빼 줌
+        get_object_or_404(ReservationInfo, pk=information).acceptable_size_of_party_update(party)
         iamport = Iamport(imp_key=settings.IMP_KEY,
                           imp_secret=settings.IMP_SECRET)
         # 입력한 imp_uid로부터 결제정보를 가져옴
