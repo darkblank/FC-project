@@ -18,7 +18,7 @@
     <div class="low">
         <p>{{ rest.name }}</p>
         <form action="{% url 'reservations:views:reservation' pk=rest.pk %}" method="get">
-            <input class="date-input datetime" id="date-input" type="text" />
+            <input class="date-input datetime" id="date-input" type="text" name="date"/>
             <button>예약</button>
         </form>
     </div>
