@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Profile
     url(r'^profile/$', views.profile, name='profile'),
-    url(r'^(?P<pk>\d+)/update-profile/$', views.update_profile, name='update-profile'),
+    url(r'^update-profile/$', views.update_profile, name='update-profile'),
     # url(r'^(?P<pk>\d+)/owner-profile/$', apis.OwnerProfileView.as_view(), name='owner-profile'),
     # url(r'^(?P<pk>\d+)/preference/$', apis.PreferenceUpdate.as_view(), name='preference')
     # url(r'(?P<user_pk>\d+)/my-reservation/$' ),
