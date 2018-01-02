@@ -32,13 +32,16 @@
                     <li>{{ comment.star_rate }} | {{ comment.comment }}</li>
             {% endfor %}
             </ul>
-            <form action="{% url 'restaurants:detail:restaurant-detail' pk=restaurant.pk %}" class="form-inline" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ form }}
-                    <button type="submit" class="btn btn-primary">댓글 작성</button>
-                </div>
-            </form>
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'restaurants:detail:restaurant-detail' pk=restaurant.pk %}" class="form-inline" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form }}
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </div>
+                </form>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}
