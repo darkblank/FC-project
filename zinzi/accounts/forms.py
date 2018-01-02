@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 
+from accounts.models import Profile
+
 User = get_user_model()
 
 
@@ -92,3 +94,12 @@ class SigninForm(forms.Form):
     def _signin(self, request):
         if self.user:
             login(request.self.user)
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = (
+            'nickname',
+            'profile_image',
+        )

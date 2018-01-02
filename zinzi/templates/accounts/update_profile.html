@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
 {% block title %}프로필 수정{% endblock %}
 {% block content %}
+    {% include 'include/form-horizontal.html' with enctype=enctype form=form submit_text='프로필 수정' %}
 {% endblock %}

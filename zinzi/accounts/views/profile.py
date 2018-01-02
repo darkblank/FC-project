@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
 from django.shortcuts import render
 
+from accounts.forms import UpdateProfileForm
 from accounts.models import Profile
 
 User = get_user_model()
@@ -16,4 +16,18 @@ def profile(request):
 
 
 def update_profile(request, pk):
-    return HttpResponse('폼 만들어야함...')
+    if request.method == 'POST':
+        form = UpdateProfileForm(request.POST)
+        if form.is_valid():
+            nickname = request.POST['nickname']
+            profile_image = request.POST['profile_image']
+            Profile.objects.update(
+                nickname=nickname,
+                profile_image=profile_image,
+            )
+    else:
+        form = UpdateProfileForm
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/update_profile.html', context)
