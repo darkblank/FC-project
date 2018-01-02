@@ -9,7 +9,6 @@ from restaurants.models import Restaurant, ReservationInfo
 
 @login_required
 def reservation_view(request, pk):
-    # 지현님 레스토랑 디테일 뷰에서 예약하기 버튼 누를시 리다이렉트 이쪽으로
     if request.is_ajax():
         info_pk = request.GET.get('info')
         info = get_object_or_404(ReservationInfo, pk=info_pk)
