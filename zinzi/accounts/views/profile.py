@@ -16,6 +16,7 @@ def profile(request):
         restaurants = Restaurant.objects.get(owner=request.user)
     else:
         target_user = Profile.objects.get(user=request.user)
+        restaurants = None
     context = {
         'target_user': target_user,
         'restaurants': restaurants,
