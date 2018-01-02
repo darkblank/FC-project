@@ -27,6 +27,7 @@
             var party = $("#id_party").val();
             if(limit==null){
                 alert("예약 시간을 선택하지 않았습니다.");
+                $("#id_party").val(null)
             }
             else if(party>limit){
                 alert("최대 허용숫자를 넘었습니다.");
