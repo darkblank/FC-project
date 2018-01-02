@@ -31,14 +31,13 @@ def restaurant_detail_view(request, pk):
         raise Http404
 
 
-def check_opened_time_view(request, pk):
-    res_pk = pk
-    party = request.GET.get('party', None)
-    date = request.GET.get('date', None)
-    queryset = ReservationInfo.check_acceptable_time(res_pk=res_pk, party=party, date=date)
-    if queryset is None:
-        raise ValidationError('party 또는 date가 정상적으로 입력되지 않았습니다.')
-    if not queryset.count():
-        raise ValidationError('예약 가능한 정보가 없습니다.')
-    return render(request, 'restaurant/check_opened_time.html', {'list': queryset})
+# def check_opened_time_view(request, pk):
+#     res_pk = pk
+#     date = request.GET.get('date', None)
+#     queryset = ReservationInfo.check_acceptable_time(res_pk=res_pk, date=date)
+#     if queryset is None:
+#         raise ValidationError('party 또는 date가 정상적으로 입력되지 않았습니다.')
+#     if not queryset.count():
+#         raise ValidationError('예약 가능한 정보가 없습니다.')
+#     return render(request, 'restaurant/check_opened_time.html', {'list': queryset})
 
