@@ -11,15 +11,16 @@ User = get_user_model()
 
 @login_required
 def profile(request):
-    if request.user.is_authenticated:
+    if request.user.profile.is_owner:
         target_user = Profile.objects.get(user=request.user)
         restaurants = Restaurant.objects.get(owner=request.user)
-        context = {
-            'target_user': target_user,
-            'restaurants': restaurants,
-        }
-        return render(request, 'accounts/profile.html', context)
-    return redirect('accounts:signin')
+    else:
+        target_user = Profile.objects.get(user=request.user)
+    context = {
+        'target_user': target_user,
+        'restaurants': restaurants,
+    }
+    return render(request, 'accounts/profile.html', context)
 
 
 @login_required
