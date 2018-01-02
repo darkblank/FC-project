@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
-from restaurants.models import Restaurant, ReservationInfo
+from restaurants.forms import CommentForm
+from restaurants.models import Restaurant, ReservationInfo, Comment
 
 
 def restaurant_list_view(request):
@@ -24,9 +25,25 @@ def restaurant_list_view(request):
 
 
 def restaurant_detail_view(request, pk):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.restaurant = restaurant
+            comment.save()
+            return redirect('restaurants:detail:restaurant-detail', pk=pk)
     if request.method == "GET":
         restaurant = get_object_or_404(Restaurant, pk=pk)
-        return render(request, 'restaurant/detail.html', {'rest': restaurant})
+        comment_list = Comment.objects.filter(restaurant=restaurant)
+        form = CommentForm
+        ctx = {
+            "restaurant": restaurant,
+            "comment_list": comment_list,
+            "form": form,
+        }
+        return render(request, 'restaurant/detail.html', ctx)
     else:
         raise Http404
 

@@ -2,11 +2,16 @@
 
 {% block script %}
     <script>
+        $(document).ready(function(){
+            $('#id_star_rate').addClass('form-control');
+            $('#id_comment').attr("rows", 1);
+        });
         $('#date-input').datepicker({
             format: "yyyy-mm-dd",
-            minDate: "today",
+            startDate: new Date(),
             endDate: "+14d",
-            todayBtn: "linked"
+            todayBtn: "linked",
+            language: "kr"
         }).datepicker("setDate", new Date());
     </script>
 {% endblock %}
@@ -14,13 +19,25 @@
 {% block content %}
     <div class="low">
         <div class="col-md-10 col-md-offset-1">
-            <p>{{ rest.name }}</p>
-            <form action="{% url 'reservations:views:reservation' pk=rest.pk %}" method="get" class="form-inline">
+            <p>{{ restaurant.name }}</p>
+            <form action="{% url 'reservations:views:reservation' pk=restaurant.pk %}" method="get" class="form-inline">
                 <div class="form-group">
                     <label for="date-input">날짜</label>
                     <input class="date-input datetime form-control" id="date-input" type="text" name="date" />
                 </div>
                 <button type="submit" class="btn btn-primary">예약</button>
+            </form>
+            <ul>
+            {% for comment in comment_list %}
+                    <li>{{ comment.star_rate }} | {{ comment.comment }}</li>
+            {% endfor %}
+            </ul>
+            <form action="{% url 'restaurants:detail:restaurant-detail' pk=restaurant.pk %}" class="form-inline" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form }}
+                    <button type="submit" class="btn btn-primary">댓글 작성</button>
+                </div>
             </form>
         </div>
     </div>
