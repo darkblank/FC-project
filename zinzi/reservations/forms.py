@@ -5,9 +5,9 @@ from restaurants.models import ReservationInfo
 
 
 class ReservationForm(forms.ModelForm):
-    def __init__(self, restaurant, *args, **kwargs):
+    def __init__(self, restaurant, date, *args, **kwargs):
         super(ReservationForm, self).__init__(*args, **kwargs)
-        self.fields['information'].queryset = ReservationInfo.objects.filter(restaurant=restaurant)
+        self.fields['information'].queryset = ReservationInfo.check_acceptable_time(restaurant.pk, date)
 
     class Meta:
         model = Reservation

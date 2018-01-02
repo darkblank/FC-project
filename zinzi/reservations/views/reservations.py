@@ -18,8 +18,9 @@ def reservation_view(request, pk):
         }
         return JsonResponse(data)
     if request.method == 'GET':
+        date = request.GET.get('date')
         restaurant = Restaurant.objects.get(pk=pk)
-        form = ReservationForm(restaurant)
+        form = ReservationForm(restaurant, date)
         context = {
             'restaurant': restaurant,
             'form': form,
