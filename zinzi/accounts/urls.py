@@ -11,7 +11,7 @@ urlpatterns = [
 
     # Activate
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$', views.activate, name='activate'),
-    # url(r'^withdraw/$', apis.WithdrawView.as_view(), name='widthraw'),
+    url(r'^withdraw/$', views.withdraw, name='withdraw'),
 
     # Profile
     url(r'^profile/$', views.profile, name='profile'),
