@@ -1,6 +1,6 @@
 from django import forms
 
-from reservations.models import Reservation
+from reservations.models import Reservation, PaymentCancel
 from restaurants.models import ReservationInfo
 
 
@@ -17,4 +17,12 @@ class ReservationForm(forms.ModelForm):
             'party',
             'phone_number',
             'email',
+        )
+
+
+class PaymentCancelForm(forms.ModelForm):
+    class Meta:
+        model = PaymentCancel
+        fields = (
+            'reason',
         )
