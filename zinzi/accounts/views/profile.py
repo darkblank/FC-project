@@ -15,18 +15,18 @@ def profile(request):
     return render(request, 'accounts/profile.html', context)
 
 
-def update_profile(request, pk):
+def update_profile(request):
     if request.method == 'POST':
-        form = UpdateProfileForm(request.POST)
+        form = UpdateProfileForm(request.POST, request.FILES)
         if form.is_valid():
             nickname = request.POST['nickname']
-            profile_image = request.POST['profile_image']
+            profile_image = request.FILES['profile_image']
             Profile.objects.update(
                 nickname=nickname,
                 profile_image=profile_image,
             )
     else:
-        form = UpdateProfileForm
+        form = UpdateProfileForm()
     context = {
         'form': form,
     }

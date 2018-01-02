@@ -7,7 +7,7 @@
     <div>
         닉네임: {{ target_user.nickname }}
     </div>
-    <a href="{% url 'accounts:update-profile' pk=target_user.pk %}">
+    <a href="{% url 'accounts:update-profile' %}">
         <button>프로필 수정</button>
     </a>
     {% if target_user.is_owner == True %}
