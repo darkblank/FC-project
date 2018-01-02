@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 
 from reservations.forms import ReservationForm
@@ -9,6 +10,13 @@ from restaurants.models import Restaurant, ReservationInfo
 @login_required
 def reservation_view(request, pk):
     # 지현님 레스토랑 디테일 뷰에서 예약하기 버튼 누를시 리다이렉트 이쪽으로
+    if request.is_ajax():
+        info_pk = request.GET.get('info')
+        info = get_object_or_404(ReservationInfo, pk=info_pk)
+        data = {
+            "max_party": info.acceptable_size_of_party,
+        }
+        return JsonResponse(data)
     if request.method == 'GET':
         restaurant = Restaurant.objects.get(pk=pk)
         form = ReservationForm(restaurant)

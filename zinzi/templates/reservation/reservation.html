@@ -1,5 +1,42 @@
 {% extends 'base.html' %}
 
+{% block script %}
+<script>
+    $(document).ready(function(){
+        var limit = null;
+        $("#id_information").change(function(){
+            var info = $("#id_information").val();
+            var data = {
+                info: info
+            };
+            $.ajax({
+                    type: "GET",
+                    url: "{{ build_absolute_uri }}",
+                    data: data,
+                    success: function(data){
+                        limit = data["max_party"];
+                    },
+                    error: function(response, error){
+                        console.log(response);
+                        console.log(error);
+                    }
+                });
+
+        });
+        $("#id_party").change(function(){
+            var party = $("#id_party").val();
+            if(limit==null){
+                alert("예약 시간을 선택하지 않았습니다.");
+            }
+            else if(party>limit){
+                alert("최대 허용숫자를 넘었습니다.");
+                $("#id_party").val(limit)
+            }
+        })
+    });
+
+</script>
+    {% endblock %}
 {% block content %}
     {% include 'include/form-horizontal.html' with enctype=enctype form=form submit_text='예약' %}
 {% endblock %}
