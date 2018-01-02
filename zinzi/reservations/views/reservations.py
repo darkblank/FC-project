@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from rest_framework.exceptions import ParseError
 
 from reservations.forms import ReservationForm
 from reservations.models import Reservation, Payment
@@ -17,14 +19,17 @@ def reservation_view(request, pk):
         }
         return JsonResponse(data)
     if request.method == 'GET':
-        date = request.GET.get('date')
-        restaurant = Restaurant.objects.get(pk=pk)
-        form = ReservationForm(restaurant, date)
-        context = {
-            'restaurant': restaurant,
-            'form': form,
-        }
-        return render(request, 'reservation/reservation.html', context)
+        try:
+            date = request.GET.get('date')
+            restaurant = Restaurant.objects.get(pk=pk)
+            form = ReservationForm(restaurant, date)
+            context = {
+                'restaurant': restaurant,
+                'form': form,
+            }
+            return render(request, 'reservation/reservation.html', context)
+        except ParseError:
+            raise Http404
     else:
         restaurant = Restaurant.objects.get(pk=pk)
         information_pk = request.POST.get('information')
