@@ -1,25 +1,44 @@
 {% extends 'base.html' %}
 
 {% block script %}
-    {#  fixme static에 넣기   #}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css"></script>
     <script>
-        $('.date-input').datepicker({
-            'format': 'yyyy-mm-dd',
-            'startDate': "dateToday",
-            'minDate': "dateToday",
-            'autoclose': true
+        $(document).ready(function(){
+            $('#id_star_rate').addClass('form-control');
+            $('#id_comment').attr("rows", 1);
         });
+        $('#date-input').datepicker({
+            format: "yyyy-mm-dd",
+            startDate: new Date(),
+            endDate: "+14d",
+            todayBtn: "linked",
+            language: "kr"
+        }).datepicker("setDate", new Date());
     </script>
 {% endblock %}
 
 {% block content %}
     <div class="low">
-        <p>{{ rest.name }}</p>
-        <form action="{% url 'reservations:views:reservation' pk=rest.pk %}" method="get">
-            <input class="date-input datetime" id="date-input" type="text" name="date"/>
-            <button>예약</button>
-        </form>
+        <div class="col-md-10 col-md-offset-1">
+            <p>{{ restaurant.name }}</p>
+            <form action="{% url 'reservations:views:reservation' pk=restaurant.pk %}" method="get" class="form-inline">
+                <div class="form-group">
+                    <label for="date-input">날짜</label>
+                    <input class="date-input datetime form-control" id="date-input" type="text" name="date" />
+                </div>
+                <button type="submit" class="btn btn-primary">예약</button>
+            </form>
+            <ul>
+            {% for comment in comment_list %}
+                    <li>{{ comment.star_rate }} | {{ comment.comment }}</li>
+            {% endfor %}
+            </ul>
+            <form action="{% url 'restaurants:detail:restaurant-detail' pk=restaurant.pk %}" class="form-inline" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form }}
+                    <button type="submit" class="btn btn-primary">댓글 작성</button>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

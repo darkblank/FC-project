@@ -282,6 +282,7 @@ class ReservationInfo(models.Model):
         # 검색했던 날짜가 파싱된 datetime.now와 비교하여 작은경우(오늘보다 이전인경우) 검색이 되지 않도록 변경
         now_date = datetime.now() + timedelta(hours=9)
         parsed_now_date = dateutil.parser.parse(now_date.strftime('%Y-%m-%d'))
+
         if parsed_date < parsed_now_date:
             raise ParseError('date가 오늘보다 이전입니다.')
 
