@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from iamport import Iamport
 
 from reservations.forms import PaymentCancelForm
@@ -101,9 +101,16 @@ def payment_complete_view(request):
 @login_required()
 def payment_cancel_view(request, pk):
     payment = get_object_or_404(Payment, pk=pk)
-    form = PaymentCancelForm()
+    if request.method == 'POST':
+        form = PaymentCancelForm(request.POST)
+        if form.is_valid():
+            cancel = form.save(commit=False)
+            cancel.payment = payment
+            cancel.save()
+        return redirect('index')
+    else:
+        form = PaymentCancelForm()
     context = {
-        'payment': payment,
         'form': form,
     }
     return render(request, 'reservation/cancel.html', context)
