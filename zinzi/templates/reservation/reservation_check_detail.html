@@ -28,6 +28,11 @@
                 cancel_reason: {{ payment.paymentcancel.reason }}
             </div>
         {% endif %}
+        {% if payment.reservation.status == 'cancel request' %}
+            <div>
+                <a href="{% url 'reservations:views:payment_cancel_confirm' pk=payment.pk %}">취소 확인</a>
+            </div>
+        {% endif %}
     {% else  %}
         {% if payment.reservation.status == 'paid' %}
             <div>
