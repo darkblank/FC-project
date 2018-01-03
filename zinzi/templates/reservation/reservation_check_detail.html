@@ -20,8 +20,12 @@
         status: {{ reservation.status }}
     </div>
     {% if request.user.profile_set.is_owner %}
-    <div>
-        payment: {{ payment.imp_uid }}
-    </div>
+        <div>
+            payment: {{ payment.imp_uid }}
+        </div>
+    {% else %}
+        <div>
+            <a href="{% url 'reservations:views:payment_cancel' pk=payment.pk %}">취소 요청</a>
+        </div>
     {% endif %}
 {% endblock %}
