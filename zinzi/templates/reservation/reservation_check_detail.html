@@ -23,6 +23,11 @@
         <div>
             payment: {{ payment.imp_uid }}
         </div>
+        {% if payment.paymentcancel %}
+            <div>
+                cancel_reason: {{ payment.paymentcancel.reason }}
+            </div>
+        {% endif %}
     {% else  %}
         {% if payment.reservation.status == 'paid' %}
             <div>
