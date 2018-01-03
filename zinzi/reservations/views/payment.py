@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core import exceptions
 from django.http import Http404
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -109,10 +110,30 @@ def payment_cancel_request_view(request, pk):
             payment.reservation.status = 'cancel request'
             payment.reservation.save()
             cancel.save()
-        return redirect('index')
+        return redirect('reservations:views:reservation_check_detail', pk=payment.reservation.pk)
     else:
         form = PaymentCancelForm()
     context = {
         'form': form,
     }
     return render(request, 'reservation/cancel.html', context)
+
+
+@login_required()
+def payment_cancel_confirm_view(request, pk):
+    payment = get_object_or_404(Payment, pk=pk)
+    iamport = Iamport(imp_key=settings.IMP_KEY,
+                      imp_secret=settings.IMP_SECRET)
+    # 입력한 취소 사유로 해당 imp_uid의 결제 취소 진행
+    # Iamport.ResponseError > 이미 결제 취소되어진 경우
+    try:
+        cancel = iamport.cancel(payment.paymentcancel.reason, imp_uid=payment.imp_uid)
+    except Iamport.ResponseError:
+        raise exceptions.PermissionDenied('Already cancelled')
+    all_fields = [f.name for f in Payment._meta.get_fields()]
+    Payment.objects.filter(pk=pk).update(
+        **{key: value for key, value in cancel.items() if key in all_fields},
+    )
+    payment.reservation.status = 'cancelled'
+    payment.reservation.save()
+    return redirect('reservations:views:reservation_check_detail', pk=payment.reservation.pk)
