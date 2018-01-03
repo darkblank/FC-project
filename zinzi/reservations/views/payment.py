@@ -99,7 +99,7 @@ def payment_complete_view(request):
 
 
 @login_required()
-def payment_cancel_view(request, pk):
+def payment_cancel_request_view(request, pk):
     payment = get_object_or_404(Payment, pk=pk)
     if request.method == 'POST':
         form = PaymentCancelForm(request.POST)
