@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from iamport import Iamport
 
+from reservations.forms import PaymentCancelForm
 from reservations.models import Reservation, Payment
 from restaurants.models import ReservationInfo, Restaurant
 
@@ -95,3 +96,14 @@ def payment_complete_view(request):
         'info': info,
     }
     return render(request, 'reservation/complete.html', context)
+
+
+@login_required()
+def payment_cancel_view(request, pk):
+    payment = get_object_or_404(Payment, pk=pk)
+    form = PaymentCancelForm()
+    context = {
+        'payment': payment,
+        'form': form,
+    }
+    return render(request, 'reservation/cancel.html', context)
