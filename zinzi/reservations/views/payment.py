@@ -106,7 +106,7 @@ def payment_cancel_view(request, pk):
         if form.is_valid():
             cancel = form.save(commit=False)
             cancel.payment = payment
-            payment.reservation.status = 'request'
+            payment.reservation.status = 'cancel request'
             payment.reservation.save()
             cancel.save()
         return redirect('index')
