@@ -1,9 +1,8 @@
-from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 
 from restaurants.forms import CommentForm
-from restaurants.models import Restaurant, ReservationInfo, Comment
+from restaurants.models import Restaurant, Comment
 
 
 def restaurant_list_view(request):
@@ -47,7 +46,6 @@ def restaurant_detail_view(request, pk):
     else:
         raise Http404
 
-
 # def check_opened_time_view(request, pk):
 #     res_pk = pk
 #     date = request.GET.get('date', None)
@@ -57,4 +55,3 @@ def restaurant_detail_view(request, pk):
 #     if not queryset.count():
 #         raise ValidationError('예약 가능한 정보가 없습니다.')
 #     return render(request, 'restaurant/check_opened_time.html', {'list': queryset})
-
