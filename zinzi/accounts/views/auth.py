@@ -97,8 +97,25 @@ def withdraw(request):
     return redirect('index')
 
 
-def change_password(request):
-    pass
+# 비밀번호 변경
+# @login_required
+# def change_password(request):
+#     if request.method == 'POST':
+#         form = PasswordChangeForm(request.POST)
+#         if form.is_valid():
+#             user = User.objects.get(user=request.user)
+#             password = form.cleaned_data['password1']
+#             password_confirm = form.cleaned_data['password2']
+#             if password == password_confirm:
+#                 user.set_password(password)
+#                 user.save()
+#                 return redirect('accounts:profile')
+#     else:
+#         form = PasswordChangeForm
+#     context = {
+#         'form': form,
+#     }
+#     return render(request, 'accounts/reset-password.html', context)
 
 
 # 페이스북 로그인
