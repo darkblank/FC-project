@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    restaurant: {{ restaurant }}
-    date: {{ information.date }}
-    time: {{ information.time }}
-    name: {{ name }}
-    party: {{ party }}
-    phone_number: {{ phone_number }}
-    email: {{ email }}
-    price: {{ price }}
+    <div class="row">
+        <ul class="list-group" style="height: auto;">
+            <li class="list-group-item">레스토랑 이름: {{ restaurant }}</li>
+            <li class="list-group-item">날짜: {{ information.date }}</li>
+            <li class="list-group-item">시간: {{ information.time }}</li>
+            <li class="list-group-item">예약자: {{ name }}</li>
+            <li class="list-group-item">인원: {{ party }}</li>
+            <li class="list-group-item">핸드폰 번호: {{ phone_number }}</li>
+            <li class="list-group-item">email: {{ email }}</li>
+            <li class="list-group-item">총 가격: {{ price }}</li>
+        </ul>
+    </div>
+    <div class="row">위의 내용이 맞으시면 아래 결제 버튼을 눌러주세요.</div>
     <form action="{% url 'reservations:views:payment' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="restaurant" value="{{ restaurant }}">
@@ -20,6 +25,6 @@
         <input type="hidden" name="price" value="{{ price }}">
         <input type="hidden" name="information_pk" value="{{ information.pk }}">
         <input type="hidden" name="restaurant_pk" value="{{ restaurant.pk }}">
-    <input type="submit" value="결제">
+    <input class="row" type="submit" value="결제">
 </form>
 {% endblock %}
