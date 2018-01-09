@@ -4,13 +4,17 @@
 <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 {% endblock %}
 {% block content %}
-    restaurant: {{ restaurant }}
-    information: {{ information }}
-    name: {{ name }}
-    party: {{ party }}
-    price: {{ price }}
-    phone_number: {{ phone_number }}
-    email: {{ email }}
+    <div class="row">
+        <ul class="list-group" style="height: auto;">
+            <li class="list-group-item">레스토랑 이름: {{ restaurant }}</li>
+            <li class="list-group-item">날짜 및 시간: {{ information }}</li>
+            <li class="list-group-item">예약자: {{ name }}</li>
+            <li class="list-group-item">인원: {{ party }}</li>
+            <li class="list-group-item">핸드폰 번호: {{ phone_number }}</li>
+            <li class="list-group-item">email: {{ email }}</li>
+            <li class="list-group-item">총 가격: {{ price }}</li>
+        </ul>
+    </div>
     <br><script>
     var IMP = window.IMP;
     IMP.init('imp56421298');
