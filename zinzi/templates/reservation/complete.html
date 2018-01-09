@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {{ info.name }}
+    <div class="row">
+        <ul class="list-group" style="height: auto;">
+            <li class="list-group-item">레스토랑 이름: {{ info.restaurant }}</li>
+            <li class="list-group-item">날짜 및 시간: {{ info.information }}</li>
+            <li class="list-group-item">예약자: {{ info.name }}</li>
+            <li class="list-group-item">인원: {{ info.party }}</li>
+            <li class="list-group-item">핸드폰 번호: {{ info.phone_number }}</li>
+            <li class="list-group-item">email: {{ info.email }}</li>
+            <li class="list-group-item">총 가격: {{ info.price }}</li>
+        </ul>
+    </div>
+    <div class="row">위의 내용으로 결제가 완료 되었습니다.</div>
 {% endblock %}
