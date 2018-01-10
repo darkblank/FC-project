@@ -1,42 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        restaurant: {{ reservation.restaurant }}
-    </div>
-    <div>
-        information: {{ reservation.information }}
-    </div>
-    <div>
-        name: {{ reservation.name }}
-    </div>
-    <div>
-        party: {{ reservation.party }}
-    </div>
-    <div>
-        price: {{ reservation.price }}
-    </div>
-    <div>
-        status: {{ reservation.status }}
+    <div class="row">
+        <ul class="list-group" style="height: auto;">
+            <li class="list-group-item">레스토랑 이름: {{ reservation.restaurant }}</li>
+            <li class="list-group-item">날짜 및 시간: {{ reservation.information }}</li>
+            <li class="list-group-item">예약자: {{ reservation.name }}</li>
+            <li class="list-group-item">인원: {{ reservation.party }}</li>
+            <li class="list-group-item">핸드폰 번호: {{ reservation.phone_number }}</li>
+            <li class="list-group-item">email: {{ reservation.email }}</li>
+            <li class="list-group-item">총 가격: {{ reservation.price }}</li>
+            <li class="list-group-item">결제 상태: {{ reservation.status }}</li>
+        </ul>
     </div>
     {% if request.user.profile.is_owner %}
-        <div>
-            payment: {{ payment.imp_uid }}
+        <div class="row">
+            <ul class="list-group" style="height: auto;">
+                <li class="list-group-item">결제번호: {{ payment.imp_uid }}</li>
+            </ul>
         </div>
         {% if payment.paymentcancel %}
-            <div>
-                cancel_reason: {{ payment.paymentcancel.reason }}
+            <div class="row">
+            <ul class="list-group" style="height: auto;">
+                <li class="list-group-item">취소 이유: {{ payment.paymentcancel.reason }}</li>
+            </ul>
             </div>
         {% endif %}
         {% if payment.reservation.status == 'cancel request' %}
             <div>
-                <a href="{% url 'reservations:views:payment_cancel_confirm' pk=payment.pk %}">취소 확인</a>
+                <a class="btn btn-primary btn-block" href="{% url 'reservations:views:payment_cancel_confirm' pk=payment.pk %}">취소 확인</a>
             </div>
         {% endif %}
     {% else  %}
         {% if payment.reservation.status == 'paid' %}
             <div>
-                <a href="{% url 'reservations:views:payment_cancel' pk=payment.pk %}">취소 요청</a>
+                <a class="btn btn-primary btn-block" href="{% url 'reservations:views:payment_cancel' pk=payment.pk %}">취소 요청</a>
             </div>
         {% endif %}
     {% endif %}
